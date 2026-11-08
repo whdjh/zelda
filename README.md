@@ -27,6 +27,8 @@ npm run test:e2e     # Google Chrome, 360/390px 브라우저 검사
 | --- | --- |
 | 제품을 처음 이해하기 | [5분 요약](START-HERE.md) |
 | 모든 기획/설계 찾기 | [분야별 색인](docs/INDEX.md) |
+| 전체 공략집 범위·집필 현황 | [전체 구성](docs/game/03-oot-guide-outline.md) |
+| 첫 구간 사실 대조·자체 문장 | [초반 공략 초안](docs/research/04-oot-opening.md) |
 | 개발 시작·폴더 구조·명령 | [로컬 개발](docs/development/01-local-setup.md) |
 | 구현/미구현/미검증 구분 | [현재 상태](docs/development/02-project-status.md) |
 | 후속 로그인 연결 시 Supabase 설정 | [단계별 설정](docs/development/03-supabase-setup.md) |

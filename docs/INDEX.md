@@ -40,7 +40,7 @@
 
 - [일반 유저 추천 루트 판단 기준](./game/01-route-criteria.md)
 - [공략·유튜브 조사 프로토콜](./game/02-research-protocol.md)
-- [시오 콘텐츠 구성 계획(실제 공략 조사 대기)](./game/03-oot-guide-outline.md)
+- [전체 공략집 구성과 전 구간 집필 현황](./game/03-oot-guide-outline.md)
 - [단계별 힌트와 스포일러 정책](./game/04-hint-policy.md)
 - [진행 수정에 따른 추천 경로 변화](./game/05-route-adaptation.md)
 
@@ -71,6 +71,7 @@
 - [출처 등록부](./research/01-source-register.md)
 - [@nintaku_chick 등 영상 조사 카드](./research/02-youtube-review-template.md)
 - [경로 후보 비교·판정 템플릿](./research/03-route-decision-template.md)
+- [첫 장비 준비: 사실 대조와 자체 공략 초안](./research/04-oot-opening.md)
 - [게임 공략 데이터 입력 규칙](../content/ocarina-of-time/README.md)
 
 ## 문서 해석 기준

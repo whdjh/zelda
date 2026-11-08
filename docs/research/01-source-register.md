@@ -25,6 +25,19 @@
 | T01 | [Next.js App Router 문서](https://nextjs.org/docs/app) | 개발 | 직접 확인 여부 프로젝트 착수 시 재확인 | 정적 콘텐츠와 인터랙티브 컴포넌트 |
 | T02 | [React useContext](https://react.dev/reference/react/useContext) | 개발 | 개발 시 버전 재확인 | props drilling이 실제 문제일 때만 |
 | T03 | [WCAG 2.2](https://www.w3.org/TR/WCAG22/) | 접근성 | 공개 표준 | 텍스트 대비·터치·키보드 |
+| G01 | [GameWith 스토리 차트](https://gamewith.jp/zelda-tokino-ocarina/563310) | 리메이크 공략 | 목차·초반 본문 확인 | 전체 집필 범위 대조용. 전 구간의 사실/최적성 검수는 미완료 |
+| G02 | [GameWith 초반 진행](https://gamewith.jp/zelda-tokino-ocarina/563396) | 리메이크 공략 | 관련 본문 확인 | 초반 장비/통로 조건. 직접 플레이 미확인 |
+| G03 | [GameWith 변경점](https://gamewith.jp/zelda-tokino-ocarina/586513) | 판본 비교 | 페이지 확인·세부 대조 대기 | 구판 기억을 그대로 적용하지 않기 위한 조사 후보 |
+| G04 | [Zelda Dungeon Switch 2 첫 구간](https://www.zeldadungeon.net/wiki/Walkthrough:Great_Deku_Tree_(Ocarina_of_Time)) | 리메이크 공략 | 초반 관련 본문 확인 | 본문이 N64/3DS 공략과 구분됨. C03 기존 URL은 이번 접근에서 403 |
+| G05 | [GamesRadar 검·방패 안내](https://www.gamesradar.com/games/the-legend-of-zelda/zelda-ocarina-of-time-sword-shield/) | 리메이크 공략 | 관련 본문 확인 | 초반 이동/가격 대조. 이미지·문장 전재 안 함 |
+
+G01~G05 열람일은 2026-11-08이며 자료에서 Switch 2 리메이크 대상임을 확인했다. 실제 게임 내 한글 표기·전체 동선·직접 플레이를 검증한 것은 아니다. 첫 사실 비교와 자체 문장은 [초반 집필 초안](04-oot-opening.md)에 기록했다.
+
+## 출처 계보와 독립성
+
+[OoT Guide 지도 안내](https://ootguide.com/ko/map/remake/?area=kokiri-forest&mode=walkthrough)는 절차·수집·이미지가 GameWith와 Nintendúo 자료를 정리한 것이라고 명시하고 자체 전수 플레이 검증을 주장하지 않는다. 따라서 C01과 G01/G02를 독립 출처 두 개로 세지 않는다. 번역/미러/정리 사이트를 찾으면 먼저 원출처와 계보를 기록한다.
+
+G02/G04/G05는 각각 별도 편집처의 본문을 대조했다. 같은 사실의 일치와 실제 취재 독립성은 구분하며, 공통 오류 가능성은 직접 플레이로 확인한다. Y01은 계속 개별 영상 미검증이며 임의 영상·시점을 추가하지 않았다.
 
 ## 정보의 성격을 구분
 
