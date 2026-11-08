@@ -1,6 +1,6 @@
 # 기술 설계 — 현재 구현 기준
 
-> 최신 사용자 요구로 Supabase 인증/DB를 포함한다. 과거의 서버 제외 결정은 폐기했다. [ADR-011/012](../decisions/001-architecture-decisions.md), [구현 상태](../development/02-project-status.md)를 함께 확인한다.
+> 현재 우선순위는 전체 공략집 제작이며 기본 사용 흐름은 비로그인이다. Supabase 인증/DB 준비 코드는 보존하고 연결은 뒤로 미룬다. [ADR-011/012](../decisions/001-architecture-decisions.md), [구현 상태](../development/02-project-status.md)를 함께 확인한다.
 
 ## 책임과 선택
 
@@ -10,8 +10,8 @@
 | UI | SEED Design React | 버튼·입력·Bottom Sheet·선택 컨트롤 직접 사용 |
 | CSS | Tailwind v4 + SEED 공식 theme | 레이아웃과 SEED 토큰 재사용; 복잡한 고유 UI가 생길 때만 CSS Modules |
 | 클라이언트 상태 | useState + 작은 도메인 hook | 선택 역·시트·로컬 진행도; Context는 실제 공유 문제 전 추가하지 않음 |
-| 서버 | Server Actions / Route Handlers | 메일 로그인·코드 교환·로그아웃·서버 기록 읽기/저장 |
-| 인증·DB | Supabase Auth / PostgreSQL | 사용자별 진행도·힌트 해금·RLS·동시 변경 revision |
+| 서버 (후속 준비) | Server Actions / Route Handlers | 준비 코드를 보존하고 공략 핵심 흐름 이후 로그인/서버 기록 연결 |
+| 인증·DB (후속 준비) | Supabase Auth / PostgreSQL | 사용자별 진행도·힌트 해금·RLS·동시 변경 revision 설계 보존 |
 | 비로그인 저장 | localStorage v1 / JSON 백업 | 기기 내 기록, 손상 원본 보존, 저장 실패 대응 |
 | 콘텐츠 | content/ocarina-of-time | 정적 판본별 게임 사실; 현재 비어 있음 |
 | 추천 | 순수 selectRoute 함수 | 실제 선행 역/보유 조건 검사, 다음 후보·충돌 ID 계산 |
@@ -25,7 +25,7 @@
 - src/components: 진행 설정, 로그인 폼, RouteMap/RouteGuide, HintReveal. SEED 래퍼를 복제하지 않는다.
 - src/lib: 정적 데이터 타입/검사, 규칙 계산, 저장 스키마와 useProgress.
 - src/lib/supabase: server-only 설정·쿠키 서버 클라이언트와 DB 타입. 사용자 ID는 getUser 결과만 사용한다.
-- src/proxy.ts: getClaims로 세션 갱신, 인증 응답 private/no-store. 공개 화면은 인증 서버 장애 시에도 접근 가능하게 한다.
+- src/proxy.ts: 후속 로그인/인증 콜백 경로에만 getClaims 세션 갱신과 private/no-store를 적용한다. 공개 공략 홈/노선은 인증을 조회하지 않는다.
 - supabase/migrations: 버전 관리 SQL. RLS/경쟁 수정 검증 시나리오는 supabase/tests.
 
 서버 스냅샷을 React 전역 상태로 복제하지 않는다. 로컬 기록과 서버 기록은 사용자가 직접 저장/가져오기하며, 로그인 직후 자동 교체하지 않는다.

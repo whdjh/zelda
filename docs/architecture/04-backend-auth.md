@@ -1,12 +1,12 @@
 # 백엔드·인증·사용자 진행 기록
 
-> 현재 채택: Next.js 서버 기능 + Supabase Auth/PostgreSQL. 별도 서버/ORM은 사용하지 않는다. 원격 프로젝트는 아직 연결하지 않았다.
+> **후속 준비 코드**: Next.js 서버 기능 + Supabase Auth/PostgreSQL 선택은 유지한다. ADR-013에 따라 전체 공략집 제작을 먼저 진행하며 현재 기본 화면에는 로그인/서버 저장을 연결하지 않는다. 원격 프로젝트 생성과 키 설정은 지금 필요하지 않다.
 
 ## 인증
 
 - /login: 이메일을 Server Action에 제출하고 Supabase signInWithOtp로 링크 요청. 비밀번호 저장/UI와 OAuth Secret이 필요하지 않은 최소 구성이다.
 - /auth/callback: PKCE code를 exchangeCodeForSession으로 교환하고 고정된 내부 경로로 이동한다. 임의 next URL을 허용하지 않는다. 링크는 요청한 브라우저에서 열어야 한다.
-- src/proxy.ts: 응답 생성 전에 getClaims로 세션 쿠키 갱신. 개인화 응답은 private/no-store.
+- src/proxy.ts: 후속 로그인/인증 콜백 경로에서만 getClaims로 세션 쿠키 갱신. 공개 공략 경로는 인증 조회 대상에서 제외한다.
 - 보호 Action은 매번 getUser를 호출한다. UI에 로그인 표시가 있다고 해서 신뢰하지 않는다. signOut Action도 준비했다.
 - 서버 전용 환경변수: SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, SITE_URL. 클라이언트 SDK나 서비스 역할 키를 추가하지 않는다.
 - 환경변수 미설정 시 로그인 폼은 비활성 안내를 보이며 나머지 앱은 실행된다.

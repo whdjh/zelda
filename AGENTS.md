@@ -4,6 +4,8 @@
 
 '가장 짧은 지도 경로'가 아니라 **보통 실력 이용자의 안전하고 빠른 엔딩**을 위한 한국어 시오 모바일 내비게이션. 퍼즐은 직접 풀 재미를 지키고 답은 요청받을 때만 공개한다.
 
+현재 우선순위는 **시작부터 엔딩까지의 전체 공략 조사·작성 → 판본/플레이 검증 → 공략 UI 연결 → 로그인/서버 저장**이다. 기존 Supabase 준비 코드는 보존하되, 공략 제작을 계정 설정에 종속시키지 않는다. 전체 공략은 스토리·던전·보스·퍼즐을 포함하고 100% 수집의 세부 범위는 별도 확정한다.
+
 ## 먼저 읽을 문서
 
 1. `START-HERE.md`, `docs/product/01-prd.md`, `docs/decisions/001-architecture-decisions.md`
@@ -16,7 +18,7 @@
 ## 절대 지킬 규칙
 
 1. **사실을 지어내지 않는다.** 게임의 한국어 이름/조건/경로/단축 시간은 `판본 + 출처 + 검증 상태`를 기록한다. Switch 2판에서 검증 안 한 과거판 공략은 미검증으로 남긴다.
-2. **합의한 기술 선택을 임의로 뒤집지 않는다.** Next.js + TS, SEED, Tailwind v4 + SEED 토큰, 필요 시 CSS Modules, `useState`와 조건부 Context, localStorage 백업 + **Next.js Server Actions/Route Handlers, Supabase PostgreSQL/Auth**가 현재 구성이다. 과거의 로그인/DB 금지는 폐기했다. **Jotai/Zustand와 별도 Express/Django 서버는 실제 필요 전 도입 금지**.
+2. **합의한 기술 선택을 임의로 뒤집지 않는다.** Next.js + TS, SEED, Tailwind v4 + SEED 토큰, 필요 시 CSS Modules, `useState`와 조건부 Context, localStorage 백업이 현재 사용 흐름이다. **Next.js 서버 기능 + Supabase PostgreSQL/Auth**는 후속 연결용 준비 코드로 보존한다. **Jotai/Zustand와 별도 Express/Django 서버는 실제 필요 전 도입 금지**.
 3. **SEED 토큰을 재사용한다.** Primitive/Semantic 토큰을 중복 생성하거나 토스 3단계 체계를 복제하지 않는다. 프로젝트 고유 상태/노선도에 필요한 예외만 정의하고 기록한다.
 4. **컴포넌트 책임을 먼저 정한다.** SEED Button/Sheet 같은 래퍼, `Base*`/`Generic*`/`Universal*` 등의 미래 확장용 추상화 금지. 실제 중복 또는 독립적인 동작·접근성 책임이 있을 때만 추출.
 5. **최소 상태부터 시작한다.** 로컬 UI에는 `useState`. 공유 경계에서 실제 props drilling이 있을 때만 `useContext`. Context를 전역 저장소로 남용하지 않는다.
@@ -35,7 +37,7 @@
 
 - Node 24, npm. `npm ci`, `npm run dev`, `npm run check`, `npm run build`, `npm run test:e2e`.
 - 앱: `src/app`; 고유 UI: `src/components`; 순수 로직/저장: `src/lib`; 서버 전용: `src/lib/supabase`; DB: `supabase/migrations`.
-- 공략: `content/ocarina-of-time/index.ts`. 현재 빈 배열을 유지한다. 가상 데이터는 테스트 파일 안에서만 사용한다.
+- 공략: `content/ocarina-of-time/index.ts`. 조사 근거·판본·검증 상태를 갖춘 데이터만 추가한다. 초안은 `docs/research`에서 먼저 관리하고, 가상 데이터는 테스트 파일 안에서만 사용한다.
 - 라이브러리 설정/API는 Context7의 resolve-library-id → query-docs 순으로 최신 공식 문서를 확인한다. Next.js 설치판 문서는 `node_modules/next/dist/docs`에도 있다.
 - 환경변수는 `.env.local`, 예시는 `.env.example`. 키/쿠키/이메일을 로그에 남기지 않는다. 원격 프로젝트 생성·비용 발생·기존 데이터 삭제는 사용자 판단을 받는다.
 

@@ -9,7 +9,7 @@ npm ci
 npm run dev
 ```
 
-기본 주소는 http://localhost:3000/oot. 다른 포트는 npm run dev -- --port 3001. Supabase가 없어도 첫 화면·로컬 설정·백업이 작동한다. 서버 연결은 [단계별 설정](03-supabase-setup.md)을 따른다.
+기본 주소는 http://localhost:3000/oot. 다른 포트는 npm run dev -- --port 3001. Supabase가 없어도 첫 화면·로컬 설정·백업이 작동한다. 현재는 공략 제작이 우선이며 서버 설정 없이 개발한다. 후속 로그인 연결 시에만 [단계별 설정](03-supabase-setup.md)을 따른다.
 
 ## 구조
 

@@ -20,13 +20,13 @@
 | research / quality / operations | 출처·조사 기록 / 검증·권리 / 출시·측정 |
 | ../content | 실제 배포할 공략 데이터. 조사 문서와 분리 |
 
-우선순위는 최신 사용자 지시 → 현재 ADR → 각 분야 설계다. **백엔드 제외 ADR-004는 폐기**하고 ADR-011의 Supabase 인증/DB를 채택했다. 기존 분야별 경로는 유지하고 중복된 실행/설정 설명은 아래 개발 문서로 모았다.
+우선순위는 최신 사용자 지시 → 현재 ADR → 각 분야 설계다. **백엔드 제외 ADR-004는 폐기**하고 ADR-011의 Supabase 인증/DB를 채택했다. ADR-013에 따라 현재는 전체 공략집 제작이 우선이며 로그인 연결은 후순위다. 기존 분야별 경로는 유지하고 실행/설정 설명은 아래 개발 문서로 모았다.
 
 ## 개발 시작과 사용자 설정
 
 - [로컬 실행·폴더 구조·검증 명령](./development/01-local-setup.md)
 - [구현/미구현/미검증 상태](./development/02-project-status.md)
-- [Supabase 생성·키 입력·DB·이메일 인증 설정](./development/03-supabase-setup.md)
+- [후속 로그인 연결 시 Supabase 설정](./development/03-supabase-setup.md)
 
 ## 제품·타깃·경쟁
 

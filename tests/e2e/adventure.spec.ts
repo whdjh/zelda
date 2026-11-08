@@ -13,6 +13,7 @@ test("첫 화면과 시트는 작은 화면에서 넘치지 않고 키보드로 
   await page.keyboard.press("Enter");
   await expect(page.getByRole("dialog", { name: "진행도·설정" })).toBeVisible();
   await expect(page.getByRole("radio", { name: "기본", exact: true })).toBeChecked();
+  await expect(page.getByRole("link", { name: "로그인 안내" })).toHaveCount(0);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await page.keyboard.press("Escape");
   await expect(page.getByRole("dialog")).not.toBeVisible();

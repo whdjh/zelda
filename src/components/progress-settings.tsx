@@ -27,7 +27,7 @@ function download(raw: string, filename: string) {
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
-export function ProgressSettings({ cloudStatus = "unconfigured" }: { cloudStatus?: "unconfigured" | "signed-in" | "signed-out" | "unavailable" }) {
+export function ProgressSettings({ cloudStatus }: { cloudStatus?: "unconfigured" | "signed-in" | "signed-out" | "unavailable" }) {
   const { progress, commit, notice, setNotice, storageNotice, protectedRaw, setOriginalDownloaded } = useProgress();
   const [pendingImport, setPendingImport] = useState<SavedProgress | null>(null);
   const [cloud, setCloud] = useState<{ progress: SavedProgress | null; revision: number } | null>(null);
@@ -65,7 +65,7 @@ export function ProgressSettings({ cloudStatus = "unconfigured" }: { cloudStatus
           <BottomSheet.Content className="settings-sheet">
             <BottomSheet.Header>
               <BottomSheet.Title>진행도·설정</BottomSheet.Title>
-              <BottomSheet.Description>브라우저 기록과 서버에 보관할 기록을 관리해요.</BottomSheet.Description>
+              <BottomSheet.Description>{cloudStatus ? "브라우저 기록과 서버에 보관할 기록을 관리해요." : "이 브라우저의 기록과 스포일러 설정을 관리해요."}</BottomSheet.Description>
             </BottomSheet.Header>
             <BottomSheet.Body>
               {!progress ? <p role="status">저장된 기록을 확인하고 있어요.</p> : (
@@ -115,7 +115,7 @@ export function ProgressSettings({ cloudStatus = "unconfigured" }: { cloudStatus
                     )}
                   </section>
 
-                  <section aria-labelledby="cloud-title" className="border-t border-stroke-neutral-muted pt-x5">
+                  {cloudStatus && <section aria-labelledby="cloud-title" className="border-t border-stroke-neutral-muted pt-x5">
                     <h2 id="cloud-title" className="mb-x3 t4-bold">다른 기기에서 이어하기</h2>
                     {cloudStatus !== "signed-in" ? (
                       <>
@@ -170,7 +170,7 @@ export function ProgressSettings({ cloudStatus = "unconfigured" }: { cloudStatus
                         <form action={signOut}><ActionButton size="small" variant="ghost" type="submit">로그아웃</ActionButton></form>
                       </div>
                     )}
-                  </section>
+                  </section>}
 
                   {storageNotice && <p role="alert" className="rounded-r3 bg-bg-informative-weak p-x4 t3-regular">{storageNotice}</p>}
                   {protectedRaw !== null && (
@@ -182,7 +182,7 @@ export function ProgressSettings({ cloudStatus = "unconfigured" }: { cloudStatus
                   )}
                   <p role="status" className="t3-regular">{notice}</p>
                   <p className="t2-regular text-fg-neutral-muted">
-                    브라우저 데이터 삭제 시 로컬 기록이 사라질 수 있어요. 서버에는 로그인 후 직접 저장한 기록만 보내요.
+                    {cloudStatus ? "브라우저 데이터 삭제 시 로컬 기록이 사라질 수 있어요. 서버에는 로그인 후 직접 저장한 기록만 보내요." : "기록은 이 브라우저에 저장돼요. 브라우저 데이터를 삭제하거나 기기를 바꾸기 전에 백업을 보관해 주세요."}
                   </p>
                 </div>
               )}

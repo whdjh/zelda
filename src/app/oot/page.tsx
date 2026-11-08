@@ -1,21 +1,7 @@
 import { ProgressSettings } from "@/components/progress-settings";
 import Link from "next/link";
-import { isAuthSessionMissingError } from "@supabase/supabase-js";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
 
-export const dynamic = "force-dynamic";
-
-export default async function AdventurePage() {
-  let cloudStatus: "unconfigured" | "signed-in" | "signed-out" | "unavailable" = "unconfigured";
-  try {
-    const supabase = await createSupabaseServerClient();
-    if (supabase) {
-      const { data: { user }, error } = await supabase.auth.getUser();
-      cloudStatus = user ? "signed-in" : error && !isAuthSessionMissingError(error) ? "unavailable" : "signed-out";
-    }
-  } catch {
-    cloudStatus = "unavailable";
-  }
+export default function AdventurePage() {
   return (
     <div className="page-shell px-x5 sm:px-x8">
       <header className="flex flex-wrap items-center justify-between gap-x4 border-b border-stroke-neutral-muted py-x5">
@@ -27,7 +13,7 @@ export default async function AdventurePage() {
           </svg>
           젤다 하이패스
         </a>
-        <ProgressSettings cloudStatus={cloudStatus} />
+        <ProgressSettings />
       </header>
 
       <main id="main" tabIndex={-1} className="py-x10">

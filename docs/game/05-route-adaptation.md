@@ -27,6 +27,6 @@
 
 ## 추천 계산과 인증의 책임
 
-규칙 계산 자체는 로그인 없이도 가능하다. 현재는 Supabase Auth로 서버 기록의 소유자를 확인하고 PostgreSQL에 사용자별 상태를 보관한다. 같은 순수 규칙 함수를 UI와 Server Action에서 재사용하며, 로그인 여부가 게임의 선행 조건을 바꾸지는 않는다.
+규칙 계산 자체는 로그인 없이도 가능하다. 현재 기본 흐름은 로컬 진행도다. 공략 제작 이후 Supabase Auth/PostgreSQL 준비 코드를 연결해 사용자별 서버 기록을 보관할 수 있다. 같은 순수 규칙 함수를 UI와 Server Action에서 재사용하며, 로그인 여부가 게임의 선행 조건을 바꾸지는 않는다.
 
 상세 상태·저장 알고리즘: `docs/architecture/03-progress-routing.md`.
