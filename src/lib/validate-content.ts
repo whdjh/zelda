@@ -62,6 +62,11 @@ export function validateContent(content: GuideContent): string[] {
       errors.push(`${stop.id}: 행동 요약은 1~3문장이어야 합니다.`);
     }
     stop.summary.forEach((sentence) => text(sentence, stop.id));
+    if (stop.walkthrough) {
+      if (stop.walkthrough.length === 0) errors.push(`${stop.id}: 상세 공략이 비어 있습니다.`);
+      stop.walkthrough.forEach((sentence) => text(sentence, stop.id));
+    }
+    if (stop.requiredAge && !["child", "adult"].includes(stop.requiredAge)) errors.push(`${stop.id}: 시대 조건이 올바르지 않습니다.`);
     if (stop.kind === "recommended" && !stop.recommendationReason?.trim()) {
       errors.push(`${stop.id}: 추천 경유 이유가 필요합니다.`);
     }

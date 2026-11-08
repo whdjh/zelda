@@ -24,7 +24,8 @@ test("후반 완료는 앞선 역이나 준비물을 자동 획득하지 않는�
   assert.equal(route.currentId, "a");
   assert.deepEqual(progress.completedStopIds, ["c"]);
   const locked = stops.map((stop) => ({ ...stop, prerequisiteItemIds: ["item"] }));
-  assert.equal(selectRoute(locked, progress).currentId, null);
+  assert.equal(selectRoute(locked, progress).currentId, "a");
+  assert.deepEqual(selectRoute(locked, progress).availableIds, []);
   assert.equal(selectRoute(locked, { ...progress, confirmedItemIds: ["item"] }).currentId, "a");
 });
 

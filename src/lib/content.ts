@@ -13,6 +13,8 @@ export type RouteStop = {
   id: string;
   title: string;
   summary: string[];
+  walkthrough?: string[];
+  requiredAge?: "child" | "adult";
   kind: "required" | "recommended" | "optional";
   prerequisiteStopIds: string[];
   prerequisiteItemIds: string[];

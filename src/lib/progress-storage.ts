@@ -10,6 +10,7 @@ export type SavedProgress = {
   confirmedItemIds: string[];
   revealedHintIds: string[];
   spoilerLevel: SpoilerLevel;
+  age?: "unknown" | "child" | "adult";
   updatedAt: string;
 };
 
@@ -21,6 +22,7 @@ export function createProgress(content: GuideContent): SavedProgress {
     confirmedItemIds: [],
     revealedHintIds: [],
     spoilerLevel: "default",
+    age: "unknown",
     updatedAt: new Date().toISOString(),
   };
 }
@@ -50,6 +52,9 @@ export function parseProgress(raw: string, content: GuideContent): SavedProgress
   if (typeof data.updatedAt !== "string" || Number.isNaN(Date.parse(data.updatedAt))) {
     throw new Error("기록의 저장 날짜가 올바르지 않습니다.");
   }
+  if (data.age !== undefined && !["unknown", "child", "adult"].includes(data.age as string)) {
+    throw new Error("시대 기록이 올바르지 않습니다.");
+  }
   function readIds(field: string, allowed: Set<string>): string[] {
     const values = data[field];
     if (!Array.isArray(values) || values.some((id) => typeof id !== "string" || !allowed.has(id))) {
@@ -65,6 +70,7 @@ export function parseProgress(raw: string, content: GuideContent): SavedProgress
     confirmedItemIds: readIds("confirmedItemIds", new Set(content.items.map((item) => item.id))),
     revealedHintIds: readIds("revealedHintIds", new Set(content.puzzles.flatMap((puzzle) => puzzle.hints.map((hint) => hint.id)))),
     spoilerLevel: data.spoilerLevel as SpoilerLevel,
+    age: (data.age as SavedProgress["age"]) ?? "unknown",
     updatedAt: data.updatedAt,
   };
 }
