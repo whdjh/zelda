@@ -1,0 +1,61 @@
+@layer theme, base, seed-base, components, seed-components, utilities;
+@import "@seed-design/css/base.layered.css";
+@import "tailwindcss";
+@import "@seed-design/tailwind4-theme";
+
+@layer base {
+  body {
+    margin: 0;
+    background: var(--seed-color-bg-layer-default);
+    color: var(--seed-color-fg-neutral);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+    word-break: keep-all;
+    overflow-wrap: anywhere;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--seed-color-fg-informative);
+    outline-offset: 4px;
+  }
+
+  button, a, input, label {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+@layer components {
+  .page-shell {
+    max-width: 48rem;
+    margin-inline: auto;
+    padding-bottom: max(env(safe-area-inset-bottom), var(--seed-dimension-x6));
+  }
+
+  .skip-link:not(:focus) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .skip-link:focus {
+    display: block;
+    padding: var(--seed-dimension-x4);
+  }
+
+  .settings-sheet {
+    max-width: 48rem;
+    width: 100%;
+    margin-inline: auto;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
