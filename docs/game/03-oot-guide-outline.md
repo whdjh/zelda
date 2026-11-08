@@ -16,16 +16,16 @@
 
 | 집필 단위 | 놓치지 않을 범위 (원자료 식별명) | 현재 상태 |
 | --- | --- | --- |
-| 출발 준비 | Kokiri Forest의 첫 장비와 통로 조건 | 관련 본문 3곳 대조·자체 초안 작성, 플레이 미확인 |
-| 첫 던전 | Great Deku Tree 입장·진행·퍼즐·보스·완료 | 본문 조사 대기 |
-| 소년 시절의 지역 연결 | Hyrule Castle 및 산악·수변 진입 조건 | 범위 확인, 조건 대조 대기 |
-| 초기 주요 던전 | Dodongo's Cavern / Jabu-Jabu's Belly | 던전별 본문/보스 조사 대기 |
-| 시대 전환과 재준비 | Temple of Time 및 전환 후 접근 조건 | 선행 관계 조사 대기 |
-| 중반 던전·보조 구간 | Forest / Fire / Water, Ice Cavern | 각 던전·진입·재방문 조건 조사 대기 |
-| 후반 조건·던전 | Bottom of the Well / Shadow, Gerudo / Spirit | 시대/아이템 조건과 대안 순서 조사 대기 |
-| 마지막 준비부터 엔딩 | Ganon's Castle, 최종 전투와 종료 판정 | 세부 조건·본문 조사 대기 |
+| 출발 준비 | Kokiri Forest의 첫 장비와 통로 조건 | 앱 본문·요약·힌트 작성 / 플레이 미확인 |
+| 첫 던전 | Great Deku Tree 입장·진행·퍼즐·보스·완료 | 앱 본문·보스·힌트 작성 / 플레이 미확인 |
+| 소년 시절의 지역 연결 | Hyrule Castle 및 산악·수변 진입 조건 | 앱 본문·준비 조건 작성 / 플레이 미확인 |
+| 초기 주요 던전 | Dodongo's Cavern / Jabu-Jabu's Belly | 앱 본문·보스·힌트 작성 / 플레이 미확인 |
+| 시대 전환과 재준비 | Temple of Time 및 전환 후 접근 조건 | 본문·명시적 시대 확인 구현 / 플레이 미확인 |
+| 중반 던전·보조 구간 | Forest / Fire / Water, Ice Cavern | 앱 본문·도구·힌트 작성 / 플레이 미확인 |
+| 후반 조건·던전 | Bottom of the Well / Shadow, Gerudo / Spirit | 앱 본문·조건 작성 / 대안 순서 미검증 |
+| 마지막 준비부터 엔딩 | Ganon's Castle, 최종 전투와 종료 판정 | 앱 결계·최종전·엔딩 본문 작성 / 플레이 미확인 |
 
-출처의 목차가 존재한다는 것과 우리 공략이 완성됐다는 것은 다르다. 현재 앱 게시 역/퍼즐은 0개다. [출처 등록부](../research/01-source-register.md), [첫 집필 초안](../research/04-oot-opening.md)을 함께 관리한다.
+현재 앱에는 30개 역과 31개 문제(각 3단계 힌트)가 있다. [본문 데이터](../../content/ocarina-of-time/story.ts)와 [전 구간 기록](../research/05-oot-story-draft.md)을 함께 본다. 출처 기반의 압축된 스토리 초안이며 모든 방의 상세 지도나 100% 수집 공략은 아니다. [출처 등록부](../research/01-source-register.md), [첫 집필 초안](../research/04-oot-opening.md)도 보존한다.
 
 ## 첫 집필 단위의 완료 기준
 

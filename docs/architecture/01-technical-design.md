@@ -13,7 +13,7 @@
 | 서버 (후속 준비) | Server Actions / Route Handlers | 준비 코드를 보존하고 공략 핵심 흐름 이후 로그인/서버 기록 연결 |
 | 인증·DB (후속 준비) | Supabase Auth / PostgreSQL | 사용자별 진행도·힌트 해금·RLS·동시 변경 revision 설계 보존 |
 | 비로그인 저장 | localStorage v1 / JSON 백업 | 기기 내 기록, 손상 원본 보존, 저장 실패 대응 |
-| 콘텐츠 | content/ocarina-of-time | 정적 판본별 게임 사실; 현재 비어 있음 |
+| 콘텐츠 | content/ocarina-of-time | 출처 기반 본문·힌트·준비 조건·판본별 검증 메타 |
 | 추천 | 순수 selectRoute 함수 | 실제 선행 역/보유 조건 검사, 다음 후보·충돌 ID 계산 |
 | 검증 | Node test / ESLint / TS / Playwright | 별도 테스트 러너 없이 순수 로직 검사, 핵심 모바일 동작 |
 

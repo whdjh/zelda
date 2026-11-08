@@ -72,6 +72,7 @@
 - [@nintaku_chick 등 영상 조사 카드](./research/02-youtube-review-template.md)
 - [경로 후보 비교·판정 템플릿](./research/03-route-decision-template.md)
 - [첫 장비 준비: 사실 대조와 자체 공략 초안](./research/04-oot-opening.md)
+- [전 구간 본문·힌트·출처와 미검증 과제](./research/05-oot-story-draft.md)
 - [게임 공략 데이터 입력 규칙](../content/ocarina-of-time/README.md)
 
 ## 문서 해석 기준
