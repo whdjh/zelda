@@ -1,5 +1,6 @@
 import { ProgressSettings } from "@/components/progress-settings";
 import Link from "next/link";
+import { ootContent } from "../../../content/ocarina-of-time/index";
 
 export default function AdventurePage() {
   return (
@@ -30,26 +31,22 @@ export default function AdventurePage() {
         <section aria-labelledby="route-title" className="rounded-r4 border border-stroke-neutral-muted bg-bg-layer-default p-x6">
           <div className="mb-x6 flex flex-wrap items-center justify-between gap-x3">
             <h2 id="route-title" className="t5-bold">나의 모험 노선</h2>
-            <span className="rounded-r2 bg-bg-positive-weak px-x3 py-x1 t2-bold text-fg-positive-contrast">준비 중</span>
+            <span className="rounded-r2 bg-bg-positive-weak px-x3 py-x1 t2-bold text-fg-positive-contrast">출처 기반 초안</span>
           </div>
           <div className="rounded-r3 bg-bg-neutral-weak px-x5 py-x8">
-            <svg aria-hidden="true" viewBox="0 0 160 80" className="mb-x5 h-x16 w-x32 text-fg-neutral-subtle" fill="none">
-              <path d="M16 64h42a20 20 0 0 0 20-20V36a20 20 0 0 1 20-20h46" stroke="currentColor" strokeWidth="2" strokeDasharray="5 6" />
-              <circle cx="16" cy="64" r="7" fill="currentColor" />
-              <circle cx="144" cy="16" r="7" stroke="currentColor" strokeWidth="2" />
-            </svg>
-            <h3 className="mb-x2 t5-bold">안심하고 따라갈 길을 준비하고 있어요</h3>
+            <p className="mb-x3 t2-bold text-fg-positive-contrast">시작부터 엔딩까지</p>
+            <h3 className="mb-x2 t5-bold">지금 목적지부터 따라가세요</h3>
             <p className="t3-regular text-fg-neutral-muted">
-              출처와 게임판을 확인한 공략부터 차근차근 담을 예정이에요.
-              아직 이용할 수 있는 모험 노선과 퍼즐 힌트는 없어요.
+              {ootContent.stops.length}개 구간의 진행 안내와 {ootContent.puzzles.length}개 퍼즐·전투의 단계별 힌트가 있어요.
+              상세 공략과 정답은 직접 열 때만 보여요.
             </p>
           </div>
-          <p className="mt-x4 t2-regular text-fg-neutral-muted">Nintendo Switch 2판 기준 · 공략 조사 및 플레이 검증 대기</p>
-          <Link href="/oot/route" className="mt-x4 inline-flex min-h-x11 items-center text-fg-informative-contrast t3-bold">노선 준비 상태 확인 →</Link>
+          <p className="mt-x4 t2-regular text-fg-neutral-muted">Nintendo Switch 2판 자료 참고 · 직접 플레이 미검증 · 수집 100% 공략은 미포함</p>
+          <Link href="/oot/route" className="mt-x4 inline-flex min-h-x11 items-center text-fg-informative-contrast t3-bold">공략 시작하기 →</Link>
         </section>
 
         <section aria-labelledby="guide-title" className="mt-x10">
-          <h2 id="guide-title" className="mb-x5 t5-bold">이렇게 모험을 도울 거예요</h2>
+          <h2 id="guide-title" className="mb-x5 t5-bold">이렇게 이용하세요</h2>
           <ol className="grid gap-x6 sm:grid-cols-3">
             <li className="border-t border-stroke-neutral-muted pt-x4">
               <p className="mb-x2 t2-bold text-fg-positive-contrast">01 · 지금 갈 곳</p>

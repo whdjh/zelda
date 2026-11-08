@@ -3,7 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "젤다 하이패스 · 모험 내비게이션",
-  description: "시간의 오카리나를 위한 한국어 모험 내비게이션. 공략 콘텐츠를 준비하고 있습니다.",
+  description: "시간의 오카리나의 시작부터 엔딩까지. 목표별 진행 안내와 요청해서 여는 상세 공략·단계별 힌트를 제공하는 출처 기반 초안입니다.",
   robots: { index: false, follow: false },
 };
 
