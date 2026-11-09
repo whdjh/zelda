@@ -34,6 +34,15 @@ sources.push({
   url: "https://www.gamesradar.com/games/the-legend-of-zelda/zelda-ocarina-of-time-sword-shield/", version: gameVersion,
 });
 
+// 2026-11-09: 본문 열람. 같은 편집처의 문서는 독립 교차 근거로 세지 않는다.
+sources.push(...[
+  ["nl-ice", "Nintendo Life · 얼음 동굴", "https://www.nintendolife.com/guides/zelda-ocarina-of-time-ice-cavern-walkthrough-switch-2"],
+  ["nl-fire", "Nintendo Life · 불의 신전", "https://www.nintendolife.com/guides/zelda-ocarina-of-time-fire-temple-walkthrough-switch-2"],
+  ["nl-water", "Nintendo Life · 물의 신전", "https://www.nintendolife.com/guides/zelda-ocarina-of-time-water-temple-walkthrough-switch-2"],
+  ["nl-fairies", "Nintendo Life · 대요정 샘", "https://www.nintendolife.com/guides/zelda-ocarina-of-time-great-fairy-fountain-locations-all-switch-2"],
+  ["fb-songs", "FinalBoss · 곡과 습득 조건", "https://finalboss.io/zelda-oot-switch-2-ocarina-songs"],
+].map(([id, title, url]) => ({ id, title, url, version: gameVersion })));
+
 export function draft(sourceIds: string[], caveat?: string): Verification {
   return { status: "proposed", version: gameVersion, sourceIds,
     caveat: caveat ?? "출처를 참고해 작성한 초안입니다. 직접 플레이 미검증이며, 일부 이름은 통용명·자체 제목으로 공식 한글 표기를 확인해야 합니다." };
