@@ -58,6 +58,8 @@ export function validateContent(content: GuideContent): string[] {
     register(stop.id);
     text(stop.title, stop.id);
     verification(stop.verification, stop.id);
+    if (stop.routeVerification) verification(stop.routeVerification, stop.id);
+    for (const id of stop.rewardItemIds ?? []) if (!items.has(id)) errors.push(`${stop.id}: 없는 획득물 ${id}`);
     if (stop.summary.length < 1 || stop.summary.length > 3) {
       errors.push(`${stop.id}: 행동 요약은 1~3문장이어야 합니다.`);
     }
@@ -107,7 +109,13 @@ export function validateContent(content: GuideContent): string[] {
     }
     if (visited.has(id)) return;
     visiting.add(id);
-    stops.get(id)?.prerequisiteStopIds.forEach(visit);
+    const stop = stops.get(id);
+    stop?.prerequisiteStopIds.forEach(visit);
+    stop?.prerequisiteItemIds.forEach((item) => {
+      const providers = content.stops.filter((entry) => entry.rewardItemIds?.includes(item));
+      if (providers.length > 1) errors.push(`${item}: 획득 경유가 중복됩니다.`);
+      providers.filter((entry) => entry.id !== id).forEach((entry) => visit(entry.id));
+    });
     visiting.delete(id);
     visited.add(id);
   }

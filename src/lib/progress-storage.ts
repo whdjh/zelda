@@ -11,6 +11,7 @@ export type SavedProgress = {
   revealedHintIds: string[];
   spoilerLevel: SpoilerLevel;
   age?: "unknown" | "child" | "adult";
+  goalStopId?: string;
   updatedAt: string;
 };
 
@@ -21,7 +22,7 @@ export function createProgress(content: GuideContent): SavedProgress {
     completedStopIds: [],
     confirmedItemIds: [],
     revealedHintIds: [],
-    spoilerLevel: "default",
+    spoilerLevel: "full",
     age: "unknown",
     updatedAt: new Date().toISOString(),
   };
@@ -44,6 +45,9 @@ export function parseProgress(raw: string, content: GuideContent): SavedProgress
   if (data.schemaVersion !== 1) throw new Error("지원하지 않는 저장 버전입니다. 원본 파일을 보관해 주세요.");
   if (data.contentVersion !== content.version) {
     throw new Error("다른 콘텐츠 버전의 기록입니다. 호환성을 확인할 때까지 원본을 보관해 주세요.");
+  }
+  if (data.goalStopId !== undefined && (typeof data.goalStopId !== "string" || !content.stops.some((stop) => stop.id === data.goalStopId))) {
+    throw new Error("경로 목적지가 현재 공략에 없습니다.");
   }
   const levels = ["strict", "default", "full"];
   if (typeof data.spoilerLevel !== "string" || !levels.includes(data.spoilerLevel)) {
@@ -69,7 +73,8 @@ export function parseProgress(raw: string, content: GuideContent): SavedProgress
     completedStopIds: readIds("completedStopIds", new Set(content.stops.map((stop) => stop.id))),
     confirmedItemIds: readIds("confirmedItemIds", new Set(content.items.map((item) => item.id))),
     revealedHintIds: readIds("revealedHintIds", new Set(content.puzzles.flatMap((puzzle) => puzzle.hints.map((hint) => hint.id)))),
-    spoilerLevel: data.spoilerLevel as SpoilerLevel,
+    spoilerLevel: data.spoilerLevel === "default" ? "full" : data.spoilerLevel as SpoilerLevel,
+    ...(data.goalStopId ? { goalStopId: data.goalStopId as string } : {}),
     age: (data.age as SavedProgress["age"]) ?? "unknown",
     updatedAt: data.updatedAt,
   };

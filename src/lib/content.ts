@@ -18,6 +18,9 @@ export type RouteStop = {
   kind: "required" | "recommended" | "optional";
   prerequisiteStopIds: string[];
   prerequisiteItemIds: string[];
+  rewardItemIds?: string[];
+  routeNote?: string;
+  routeVerification?: Verification;
   puzzleIds: string[];
   recommendationReason?: string;
   verification: Verification;

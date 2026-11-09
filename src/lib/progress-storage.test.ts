@@ -29,7 +29,7 @@ test("첫 방문에는 기본 상태를 반환하고 아직 저장하지 않는�
   let writes = 0;
   const result = loadProgress(() => ({ getItem: () => null, setItem: () => { writes++; } }), ootContent);
   assert.equal(result.ok, true);
-  if (result.ok) assert.equal(result.progress.spoilerLevel, "default");
+  if (result.ok) assert.equal(result.progress.spoilerLevel, "full");
   assert.equal(writes, 0);
 });
 

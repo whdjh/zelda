@@ -21,20 +21,20 @@ test("후반 완료는 앞선 역이나 준비물을 자동 획득하지 않는�
   const progress = { completedStopIds: ["c"], confirmedItemIds: [] };
   const route = selectRoute(stops, progress);
   assert.deepEqual(route.conflictIds, ["c"]);
-  assert.equal(route.currentId, "a");
+  assert.equal(route.currentId, null);
   assert.deepEqual(progress.completedStopIds, ["c"]);
   const locked = stops.map((stop) => ({ ...stop, prerequisiteItemIds: ["item"] }));
-  assert.equal(selectRoute(locked, progress).currentId, "a");
+  assert.equal(selectRoute(locked, progress).currentId, null);
   assert.deepEqual(selectRoute(locked, progress).availableIds, []);
-  assert.equal(selectRoute(locked, { ...progress, confirmedItemIds: ["item"] }).currentId, "a");
+  assert.equal(selectRoute(locked, { ...progress, confirmedItemIds: ["item"] }).currentId, null);
 });
 
-test("엄격·기본·전체 모드는 각각 현재·다음·미래 이름을 제한한다", () => {
+test("엄격 모드는 이름을 가리고 기본·전체는 노선을 공개한다", () => {
   const progress = { completedStopIds: [], confirmedItemIds: [] };
   const route = selectRoute(stops, progress);
   assert.equal(isStopVisible("a", "strict", progress, route), true);
   assert.equal(isStopVisible("b", "strict", progress, route), false);
   assert.equal(isStopVisible("b", "default", progress, route), true);
-  assert.equal(isStopVisible("c", "default", progress, route), false);
+  assert.equal(isStopVisible("c", "default", progress, route), true);
   assert.equal(isStopVisible("c", "full", progress, route), true);
 });

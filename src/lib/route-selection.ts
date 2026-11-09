@@ -1,28 +1,68 @@
 import type { RouteStop } from "./content.ts";
 import type { SavedProgress, SpoilerLevel } from "./progress-storage.ts";
 
-export function selectRoute(stops: RouteStop[], progress: Pick<SavedProgress, "completedStopIds" | "confirmedItemIds" | "age">) {
+type Progress = Pick<SavedProgress, "completedStopIds" | "confirmedItemIds" | "age" | "goalStopId">;
+
+export function selectRoute(stops: RouteStop[], progress: Progress) {
   const completed = new Set(progress.completedStopIds);
   const items = new Set(progress.confirmedItemIds);
-  const connected = (stop: RouteStop, completedIds = completed) => stop.prerequisiteStopIds.every((id) => completedIds.has(id));
-  const hasItems = (stop: RouteStop) => stop.prerequisiteItemIds.every((id) => items.has(id));
-  const possible = (stop: RouteStop) => connected(stop) && hasItems(stop) && (!stop.requiredAge || stop.requiredAge === progress.age);
+  const byId = new Map(stops.map((stop) => [stop.id, stop]));
+  const providers = new Map(stops.flatMap((stop) => (stop.rewardItemIds ?? []).map((id) => [id, stop.id] as const)));
   const remaining = stops.filter((stop) => stop.kind !== "optional" && !completed.has(stop.id));
-  // 준비물이 없어도 목표와 준비 방법은 보여야 한다. 완료 가능 여부와 목표 선택은 다르다.
-  const current = remaining.find((stop) => connected(stop));
-  const afterCurrent = new Set(completed);
-  if (current) afterCurrent.add(current.id);
-  const next = current ? remaining.find((stop) => stop.id !== current.id && connected(stop, afterCurrent)) : undefined;
+  const requirements = Object.fromEntries(stops.map((stop) => [stop.id, {
+    stops: stop.prerequisiteStopIds.filter((id) => !completed.has(id)),
+    items: stop.prerequisiteItemIds.filter((id) => !items.has(id)),
+    age: stop.requiredAge && stop.requiredAge !== progress.age ? stop.requiredAge : null,
+  }]));
+  // 보유 확인된 장비는 획득 경유선을 제거한다. 완료만으로 장비를 추정하지 않는다.
+  const dependencies = Object.fromEntries(stops.map((stop) => [stop.id, [...new Set([
+    ...requirements[stop.id].stops,
+    ...requirements[stop.id].items.flatMap((id) => {
+      const provider = providers.get(id);
+      return provider && provider !== stop.id && !completed.has(provider) ? [provider] : [];
+    }),
+  ])]]));
+  const goalId = progress.goalStopId && byId.has(progress.goalStopId) ? progress.goalStopId : stops.at(-1)?.id ?? null;
+  const needed = new Set<string>();
+  function include(id: string) {
+    if (completed.has(id) || needed.has(id) || !byId.has(id)) return;
+    needed.add(id);
+    dependencies[id].forEach(include);
+  }
+  if (goalId) include(goalId);
+  const ready = (stop: RouteStop) => {
+    const r = requirements[stop.id];
+    return !r.stops.length && !r.items.length && !r.age;
+  };
+  const candidates = remaining.filter((stop) => needed.has(stop.id));
+  const current = candidates.find(ready) ?? candidates.find((stop) => !dependencies[stop.id].length);
+  const next = candidates.find((stop) => stop.id !== current?.id && dependencies[stop.id].every((id) => id === current?.id));
+  // 완료 기록에서 그래프를 자르고 위상 단계별로 다시 배치한다. 순환은 콘텐츠 검사에서 차단한다.
+  const depths = new Map<string, number>();
+  function depth(id: string, visiting = new Set<string>()): number {
+    if (depths.has(id)) return depths.get(id)!;
+    if (visiting.has(id)) return 0;
+    const path = new Set(visiting).add(id);
+    const value = completed.has(id) ? -1 : Math.max(-1, ...dependencies[id].map((previous) => depth(previous, path))) + 1;
+    depths.set(id, value);
+    return value;
+  }
+  const layers: string[][] = [];
+  for (const stop of remaining) {
+    const level = depth(stop.id);
+    (layers[level] ??= []).push(stop.id);
+  }
+  for (const layer of layers) layer.sort((a, b) => Number(needed.has(b)) - Number(needed.has(a)));
   return {
-    currentId: current?.id ?? null,
-    nextId: next?.id ?? null,
-    availableIds: remaining.filter((stop) => possible(stop)).map((stop) => stop.id),
-    blockedIds: remaining.filter((stop) => !possible(stop)).map((stop) => stop.id),
-    // 시대가 바뀌어도 과거 시대의 완료 기록은 모순이 아니다.
-    conflictIds: stops.filter((stop) => completed.has(stop.id) && (!connected(stop) || !hasItems(stop))).map((stop) => stop.id),
+    goalId, currentId: current?.id ?? null, nextId: next?.id ?? null,
+    neededIds: [...needed], dependencies, requirements, layers,
+    availableIds: remaining.filter(ready).map((stop) => stop.id),
+    blockedIds: remaining.filter((stop) => !ready(stop)).map((stop) => stop.id),
+    // 기록 누락은 진행 금지가 아니다. 과거 완료와 현재 시대도 비교하지 않는다.
+    conflictIds: stops.filter((stop) => completed.has(stop.id) && requirements[stop.id].stops.length).map((stop) => stop.id),
   };
 }
 
 export function isStopVisible(id: string, level: SpoilerLevel, progress: Pick<SavedProgress, "completedStopIds">, route: ReturnType<typeof selectRoute>) {
-  return level === "full" || progress.completedStopIds.includes(id) || id === route.currentId || (level === "default" && id === route.nextId);
+  return level !== "strict" || progress.completedStopIds.includes(id) || id === route.currentId;
 }
