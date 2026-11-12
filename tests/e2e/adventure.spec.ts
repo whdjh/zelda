@@ -6,13 +6,14 @@ test("첫 화면과 시트는 작은 화면에서 넘치지 않고 키보드로 
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto("/");
   await expect(page).toHaveURL(/\/oot$/);
-  await expect(page.getByRole("heading", { level: 1 })).toContainText("헤매는 시간");
-  await expect(page.getByRole("link", { name: "공략 시작하기" })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("모험 노선");
+  await expect(page.getByRole("button", { name: "숲에서 출발 준비 · 추천", exact: true })).toBeVisible();
+  await expect(page.getByRole("link", { name: "공략 시작하기" })).toHaveCount(0);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await page.getByRole("button", { name: "진행도·설정", exact: true }).focus();
   await page.keyboard.press("Enter");
   await expect(page.getByRole("dialog", { name: "진행도·설정" })).toBeVisible();
-  await expect(page.getByRole("radio", { name: "기본", exact: true })).toBeChecked();
+  await expect(page.getByRole("radio", { name: "전체", exact: true })).toBeChecked();
   await expect(page.getByRole("link", { name: "로그인 안내" })).toHaveCount(0);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await page.keyboard.press("Escape");
@@ -41,8 +42,34 @@ test("설정을 저장해 복원하고 백업을 내보내며 잘못된 가져�
   await expect(page.getByRole("button", { name: "백업으로 교체" })).toBeVisible();
   expect(await page.evaluate((key) => localStorage.getItem(key), STORAGE_KEY)).toBe(before);
   await page.getByRole("button", { name: "백업으로 교체" }).click();
-  await expect(page.getByRole("radio", { name: "기본", exact: true })).toBeChecked();
+  await expect(page.getByRole("radio", { name: "전체", exact: true })).toBeChecked();
   await expect(page.getByRole("status")).toHaveText("백업을 복원하고 저장했어요.");
+});
+
+test("한 화면에서 설정·완료·백업 복원을 노선에 즉시 반영한다", async ({ page }, testInfo) => {
+  await page.goto("/oot/route");
+  await expect(page).toHaveURL(/\/oot$/);
+  const first = page.getByRole("button", { name: "숲에서 출발 준비 · 추천", exact: true });
+  const last = page.getByRole("button", { name: "마지막 전투와 엔딩", exact: false });
+  await expect(first).toBeVisible();
+  await page.screenshot({ path: `/private/tmp/zelda-home-${testInfo.project.name}.png` });
+  await page.getByRole("button", { name: "진행도·설정", exact: true }).click();
+  await page.getByText("엄격", { exact: true }).click();
+  await page.keyboard.press("Escape");
+  await expect(last).toHaveCount(0);
+  await first.click();
+  await page.getByRole("button", { name: "이 역 완료", exact: true }).click();
+  await page.getByRole("button", { name: "진행도·설정", exact: true }).click();
+  await expect(page.getByText("완료한 역 1개 · 공개한 힌트 0개")).toBeVisible();
+  const saved = await page.evaluate((key) => JSON.parse(localStorage.getItem(key)!), STORAGE_KEY);
+  await page.getByLabel("백업 파일 가져오기").setInputFiles({ name: "backup.json", mimeType: "application/json", buffer: Buffer.from(JSON.stringify({ ...saved, completedStopIds: [], spoilerLevel: "full" })) });
+  await page.getByRole("button", { name: "백업으로 교체", exact: true }).click();
+  await page.keyboard.press("Escape");
+  await expect(first).toBeVisible();
+  await expect(last).toHaveCount(1);
+  await first.click();
+  await page.getByRole("button", { name: "이 역 완료", exact: true }).click();
+  expect(await page.evaluate((key) => JSON.parse(localStorage.getItem(key)!).spoilerLevel, STORAGE_KEY)).toBe("full");
 });
 
 test("손상된 원본 기록은 설정을 바꿔도 보존한다", async ({ page }) => {
@@ -73,23 +100,24 @@ test("외부 설정 없이 로그인 안내·공략 노선·없는 콘텐츠를 
   await expect(page.getByText("로그인 연결을 준비하고 있어요.", { exact: false })).toBeVisible();
   await expect(page.getByRole("button", { name: "이메일로 로그인 링크 받기" })).toBeDisabled();
   await page.goto("/oot/route");
-  await expect(page.getByRole("button", { name: "숲에서 출발 준비 · 현재" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "숲에서 출발 준비 · 추천" })).toBeVisible();
   const response = await page.goto("/oot/puzzles/unknown");
   expect(response?.status()).toBe(404);
 });
 
 
-test("공략·미래 이름·정답은 요청한 범위에서만 공개하고 완료 뒤 다음 목표로 간다", async ({ page }) => {
+test("전체 노선을 공개하고 조건과 무관하게 완료하며 정답은 요청 뒤 공개한다", async ({ page }) => {
   await page.goto("/oot/route");
-  await expect(page.getByRole("button", { name: "마지막 전투와 엔딩", exact: false })).toHaveCount(0);
-  await page.getByRole("button", { name: "숲에서 출발 준비 · 현재" }).click();
+  await expect(page.getByRole("button", { name: "마지막 전투와 엔딩", exact: false })).toHaveCount(1);
+  await page.getByRole("button", { name: "숲에서 출발 준비 · 추천" }).click();
   await expect(page.getByRole("region", { name: "상세 공략", exact: true })).toHaveCount(0);
-  await expect(page.getByRole("button", { name: "이 역 완료", exact: true })).toBeDisabled();
+  await expect(page.getByRole("button", { name: "이 역 완료", exact: true })).toBeEnabled();
   await page.getByRole("button", { name: "소년", exact: true }).click();
   await page.getByRole("button", { name: "상세 공략·해법 보기" }).click();
   await expect(page.getByRole("region", { name: "상세 공략", exact: true })).toContainText("40루피");
   await page.getByRole("button", { name: "이 역 완료", exact: true }).click();
-  await expect(page.getByRole("button", { name: "첫 던전의 아래층으로 · 현재" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "첫 던전의 아래층으로 · 추천" })).toBeVisible();
+  await page.getByRole("button", { name: "목록", exact: true }).click();
   await page.getByRole("button", { name: "숲에서 출발 준비 · 완료" }).click();
   await expect(page.getByRole("region", { name: "상세 공략", exact: true })).toHaveCount(0);
   await page.keyboard.press("Escape");
@@ -148,4 +176,53 @@ test("모든 문제에서 세 단계 힌트를 열고 새로고침으로 복원�
     await expect(hints.getByRole("listitem")).toHaveCount(3);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   }
+});
+
+
+test("분기 목적지를 선택하고 보유 기록을 바꾸면 노선이 재구성된다", async ({ page }) => {
+  await page.goto("/oot/route");
+  await page.getByRole("button", { name: "물의 신전 수위 알아보기 · 준비 확인", exact: true }).click();
+  await page.getByRole("button", { name: "여기로 경로 보기" }).click();
+  await expect(page.getByRole("button", { name: "남은 경로", exact: true })).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByRole("button", { name: "얼음 속에서 잠수 준비", exact: false })).toHaveCount(1);
+  await page.getByText("내 시대·장비 기록 수정", { exact: true }).click();
+  await page.getByRole("checkbox", { name: "헤비 부츠·조라의 옷", exact: true }).check();
+  await expect(page.getByRole("button", { name: "얼음 속에서 잠수 준비", exact: false })).toHaveCount(0);
+  await page.reload();
+  await expect(page.getByRole("region", { name: "경로 안내" })).toContainText("물의 신전 수위 알아보기까지");
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test("엄격 설정에서는 미래 역 이름과 상세 해법을 DOM에 넣지 않는다", async ({ page }) => {
+  await page.goto("/oot");
+  await page.getByRole("button", { name: "진행도·설정", exact: true }).click();
+  await page.getByText("엄격", { exact: true }).click();
+  await page.keyboard.press("Escape");
+  await page.goto("/oot/route");
+  await expect(page.getByRole("button", { name: "마지막 전투와 엔딩", exact: false })).toHaveCount(0);
+  await expect(page.getByRole("region", { name: "상세 공략", exact: true })).toHaveCount(0);
+});
+
+
+test("역은 점으로 표시하고 호버·길게 누르기·키보드로 이름을 확인한다", async ({ page }, testInfo) => {
+  await page.goto("/oot/route");
+  const station = page.getByRole("button", { name: "숲에서 출발 준비 · 추천", exact: true });
+  await expect(station).toHaveText("");
+  await station.hover();
+  await expect(page.getByRole("tooltip")).toContainText("숲에서 출발 준비");
+  await page.mouse.move(0, 0);
+  await expect(page.getByRole("tooltip")).toHaveCount(0);
+  await station.focus();
+  await expect(page.getByRole("tooltip")).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("tooltip")).toHaveCount(0);
+  await station.dispatchEvent("pointerdown", { pointerType: "touch", clientX: 100, clientY: 100 });
+  await expect(page.getByRole("tooltip")).toBeVisible();
+  await station.dispatchEvent("pointerup", { pointerType: "touch" });
+  await station.dispatchEvent("click");
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  await station.dispatchEvent("click");
+  await expect(page.getByRole("dialog", { name: "숲에서 출발 준비", exact: true })).toBeVisible();
+  await page.keyboard.press("Escape");
+  await page.getByRole("region", { name: "모험 환승 노선도" }).screenshot({ path: `/private/tmp/zelda-map-${testInfo.project.name}.png` });
 });

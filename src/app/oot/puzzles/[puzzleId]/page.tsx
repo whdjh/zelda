@@ -9,7 +9,7 @@ export default async function PuzzlePage({ params }: { params: Promise<{ puzzleI
   const { puzzleId } = await params;
   if (!ootContent.puzzles.some((puzzle) => puzzle.id === puzzleId)) notFound();
   return <main id="main" className="page-shell px-x5 py-x8">
-    <Link href="/oot/route" className="mb-x6 inline-flex min-h-x11 items-center text-fg-informative-contrast">← 모험 노선</Link>
+    <Link href="/oot" className="mb-x6 inline-flex min-h-x11 items-center text-fg-informative-contrast">← 모험 노선</Link>
     <h1 className="screen-title mb-x6">퍼즐 도움</h1>
     <RouteGuide puzzleId={puzzleId} />
   </main>;

@@ -9,7 +9,7 @@ export default async function StopPage({ params }: { params: Promise<{ stopId: s
   const { stopId } = await params;
   if (!ootContent.stops.some((stop) => stop.id === stopId)) notFound();
   return <main id="main" className="page-shell px-x5 py-x8">
-    <Link href="/oot/route" className="mb-x6 inline-flex min-h-x11 items-center text-fg-informative-contrast">← 모험 노선</Link>
+    <Link href="/oot" className="mb-x6 inline-flex min-h-x11 items-center text-fg-informative-contrast">← 모험 노선</Link>
     <h1 className="screen-title mb-x6">구간 안내</h1>
     <RouteGuide initialStopId={stopId} />
   </main>;

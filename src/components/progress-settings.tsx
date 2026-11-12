@@ -3,7 +3,7 @@
 import { ActionButton, BottomSheet, Portal, SegmentedControl } from "@seed-design/react";
 import Link from "next/link";
 import { useState, useTransition } from "react";
-import { useProgress } from "@/lib/use-progress";
+import type { useProgress } from "@/lib/use-progress";
 import { readCloudProgress, writeCloudProgress } from "@/app/oot/progress-actions";
 import { signOut } from "@/app/auth/actions";
 import { ootContent } from "../../content/ocarina-of-time/index";
@@ -14,7 +14,6 @@ import {
 
 const spoilerOptions: { value: SpoilerLevel; label: string; description: string }[] = [
   { value: "strict", label: "엄격", description: "완료한 곳과 현재 목적지만 공개해요." },
-  { value: "default", label: "기본", description: "완료한 곳, 현재와 다음 목적지까지 공개해요." },
   { value: "full", label: "전체", description: "모든 목적지를 공개해요. 퍼즐의 답은 별도로 열어야 해요." },
 ];
 
@@ -27,15 +26,14 @@ function download(raw: string, filename: string) {
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
-export function ProgressSettings({ cloudStatus }: { cloudStatus?: "unconfigured" | "signed-in" | "signed-out" | "unavailable" }) {
-  const { progress, commit, notice, setNotice, storageNotice, protectedRaw, setOriginalDownloaded } = useProgress();
+export function ProgressSettings({ state, cloudStatus }: { state: ReturnType<typeof useProgress>; cloudStatus?: "unconfigured" | "signed-in" | "signed-out" | "unavailable" }) {
+  const { progress, commit, notice, setNotice, storageNotice, protectedRaw, setOriginalDownloaded } = state;
   const [pendingImport, setPendingImport] = useState<SavedProgress | null>(null);
   const [cloud, setCloud] = useState<{ progress: SavedProgress | null; revision: number } | null>(null);
   const [cloudPending, startCloudTransition] = useTransition();
 
   function changeSpoiler(value: string) {
     if (!progress || !spoilerOptions.some((option) => option.value === value)) return;
-    if (value === "full" && !window.confirm("모든 목적지 이름을 공개할까요? 퍼즐의 답은 자동으로 공개되지 않아요.")) return;
     setNotice("");
     if (commit({ ...progress, spoilerLevel: value as SpoilerLevel, updatedAt: new Date().toISOString() })) {
       setNotice("스포일러 설정을 저장했어요.");
@@ -57,7 +55,7 @@ export function ProgressSettings({ cloudStatus }: { cloudStatus?: "unconfigured"
   return (
     <BottomSheet.Root>
       <BottomSheet.Trigger asChild>
-        <ActionButton variant="neutralWeak" size="small" className="min-h-x11">진행도·설정</ActionButton>
+        <ActionButton variant="neutralWeak" size="small" className="min-h-x11" disabled={!progress}>진행도·설정</ActionButton>
       </BottomSheet.Trigger>
       <Portal>
         <BottomSheet.Positioner>

@@ -1,8 +1,11 @@
+"use client";
+
 import { ProgressSettings } from "@/components/progress-settings";
-import Link from "next/link";
-import { ootContent } from "../../../content/ocarina-of-time/index";
+import { RouteGuideView } from "@/components/route/route-guide";
+import { useProgress } from "@/lib/use-progress";
 
 export default function AdventurePage() {
+  const state = useProgress();
   return (
     <div className="page-shell px-x5 sm:px-x8">
       <header className="flex flex-wrap items-center justify-between gap-x4 border-b border-stroke-neutral-muted py-x5">
@@ -14,61 +17,17 @@ export default function AdventurePage() {
           </svg>
           젤다 하이패스
         </a>
-        <ProgressSettings />
+        <ProgressSettings state={state} />
       </header>
 
-      <main id="main" tabIndex={-1} className="py-x10">
-        <section aria-labelledby="adventure-title" className="mb-x10">
-          <p className="mb-x4 t3-bold text-fg-positive-contrast">시간의 오카리나 · 모험 내비게이션</p>
-          <h1 id="adventure-title" className="screen-title mb-x4">
-            헤매는 시간은 줄이고,<br />모험의 재미는 그대로.
-          </h1>
-          <p className="t4-regular text-fg-neutral-muted">
-            지금 할 일은 짧고 명확하게.<br />퍼즐의 답은 내가 원할 때, 필요한 만큼만.
-          </p>
-        </section>
-
-        <section aria-labelledby="route-title" className="rounded-r4 border border-stroke-neutral-muted bg-bg-layer-default p-x6">
-          <div className="mb-x6 flex flex-wrap items-center justify-between gap-x3">
-            <h2 id="route-title" className="t5-bold">나의 모험 노선</h2>
-            <span className="rounded-r2 bg-bg-positive-weak px-x3 py-x1 t2-bold text-fg-positive-contrast">출처 기반 초안</span>
-          </div>
-          <div className="rounded-r3 bg-bg-neutral-weak px-x5 py-x8">
-            <p className="mb-x3 t2-bold text-fg-positive-contrast">시작부터 엔딩까지</p>
-            <h3 className="mb-x2 t5-bold">지금 목적지부터 따라가세요</h3>
-            <p className="t3-regular text-fg-neutral-muted">
-              {ootContent.stops.length}개 구간의 진행 안내와 {ootContent.puzzles.length}개 퍼즐·전투의 단계별 힌트가 있어요.
-              상세 공략과 정답은 직접 열 때만 보여요.
-            </p>
-          </div>
-          <p className="mt-x4 t2-regular text-fg-neutral-muted">Nintendo Switch 2판 자료 참고 · 직접 플레이 미검증 · 수집 100% 공략은 미포함</p>
-          <Link href="/oot/route" className="mt-x4 inline-flex min-h-x11 items-center text-fg-informative-contrast t3-bold">공략 시작하기 →</Link>
-        </section>
-
-        <section aria-labelledby="guide-title" className="mt-x10">
-          <h2 id="guide-title" className="mb-x5 t5-bold">이렇게 이용하세요</h2>
-          <ol className="grid gap-x6 sm:grid-cols-3">
-            <li className="border-t border-stroke-neutral-muted pt-x4">
-              <p className="mb-x2 t2-bold text-fg-positive-contrast">01 · 지금 갈 곳</p>
-              <h3 className="mb-x2 t4-bold">한 번에 한 목적지</h3>
-              <p className="t3-regular text-fg-neutral-muted">앞으로의 이야기는 가리고, 현재와 다음 목적지에 집중해요.</p>
-            </li>
-            <li className="border-t border-stroke-neutral-muted pt-x4">
-              <p className="mb-x2 t2-bold text-fg-positive-contrast">02 · 막혔을 때</p>
-              <h3 className="mb-x2 t4-bold">단서부터 한 단계씩</h3>
-              <p className="t3-regular text-fg-neutral-muted">작은 힌트부터 해법까지. 어디까지 볼지는 직접 정해요.</p>
-            </li>
-            <li className="border-t border-stroke-neutral-muted pt-x4">
-              <p className="mb-x2 t2-bold text-fg-positive-contrast">03 · 다음 모험에도</p>
-              <h3 className="mb-x2 t4-bold">이 브라우저에서 이어서</h3>
-              <p className="t3-regular text-fg-neutral-muted">로그인 없이 기록하고, 백업 파일로 내보내 보관해요.</p>
-            </li>
-          </ol>
-        </section>
+      <main id="main" tabIndex={-1} className="py-x6">
+        <h1 className="mb-x2 t5-bold">시간의 오카리나 · 모험 노선</h1>
+        <p className="mb-x4 t2-regular text-fg-neutral-muted">출처 기반 초안 · 직접 플레이 미검증</p>
+        <RouteGuideView state={state} />
       </main>
 
       <footer className="border-t border-stroke-neutral-muted py-x6 t2-regular text-fg-neutral-muted">
-        <p className="mb-x2">게임의 재미는 남기고, 헤매는 시간은 줄인다.</p>
+        <p className="mb-x2">스토리·엔딩 공략 · 수집 100% 공략은 미포함</p>
         <p>비공식 팬 프로젝트이며 Nintendo와 제휴·후원 관계가 없습니다.</p>
         <p className="mt-x2"><a className="underline" href="/licenses/seed-design-NOTICE.txt">SEED Design 고지</a> · <a className="underline" href="/licenses/seed-design-LICENSE.txt">라이선스</a></p>
       </footer>

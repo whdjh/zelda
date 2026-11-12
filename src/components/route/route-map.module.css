@@ -1,0 +1,15 @@
+.viewport { max-width: 100%; overflow: auto; }
+.canvas { position: relative; margin-inline: auto; }
+.lines { position: absolute; inset: 0; color: var(--seed-color-fg-positive-contrast); pointer-events: none; }
+.bridge { fill: none; stroke: var(--seed-color-bg-layer-default); stroke-width: 8px; }
+.track { fill: none; stroke: currentColor; stroke-width: 3px; stroke-linecap: round; stroke-linejoin: round; }
+.nodes { list-style: none; margin: 0; padding: 0; }
+.node { position: absolute; width: 48px; height: 48px; touch-action: pan-x pan-y; }
+.station { display: flex; flex-direction: column; align-items: center; width: 100%; height: 48px; justify-content: center; border: 0; padding: 0; background: transparent; cursor: pointer; color: var(--seed-color-fg-neutral); }
+.dot { flex-shrink: 0; width: 16px; height: 16px; border-radius: 50%; border: 3px solid var(--seed-color-fg-positive-contrast); background: var(--seed-color-bg-layer-default); }
+.name { position: absolute; z-index: 2; top: 48px; left: 50%; transform: translateX(-50%); width: max-content; max-width: 160px; border: 1px solid var(--seed-color-stroke-neutral-muted); border-radius: var(--seed-radius-r3); background: var(--seed-color-bg-layer-default); padding: var(--seed-dimension-x3); font-size: var(--seed-font-size-t2); line-height: var(--seed-line-height-t2); box-shadow: 0 2px 8px #00000012; pointer-events: none; }
+.node:has(:focus-visible), .node:has([role="tooltip"]) { z-index: 2; }
+.station[data-status="ready"] .dot { background: var(--seed-color-fg-positive-contrast); }
+.station[data-status="recommended"] .dot { outline: 2px solid var(--seed-color-fg-positive-contrast); outline-offset: 4px; background: var(--seed-color-fg-positive-contrast); }
+.station:disabled { cursor: default; opacity: .5; }
+.station:hover:not(:disabled) .dot { transform: scale(1.15); }
