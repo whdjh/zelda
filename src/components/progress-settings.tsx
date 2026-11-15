@@ -1,11 +1,8 @@
 "use client";
 
 import { ActionButton, BottomSheet, Portal, SegmentedControl } from "@seed-design/react";
-import Link from "next/link";
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import type { useProgress } from "@/lib/use-progress";
-import { readCloudProgress, writeCloudProgress } from "@/app/oot/progress-actions";
-import { signOut } from "@/app/auth/actions";
 import { ootContent } from "../../content/ocarina-of-time/index";
 import {
   MAX_BACKUP_BYTES, parseProgress,
@@ -26,11 +23,9 @@ function download(raw: string, filename: string) {
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
-export function ProgressSettings({ state, cloudStatus }: { state: ReturnType<typeof useProgress>; cloudStatus?: "unconfigured" | "signed-in" | "signed-out" | "unavailable" }) {
+export function ProgressSettings({ state }: { state: ReturnType<typeof useProgress> }) {
   const { progress, commit, notice, setNotice, storageNotice, protectedRaw, setOriginalDownloaded } = state;
   const [pendingImport, setPendingImport] = useState<SavedProgress | null>(null);
-  const [cloud, setCloud] = useState<{ progress: SavedProgress | null; revision: number } | null>(null);
-  const [cloudPending, startCloudTransition] = useTransition();
 
   function changeSpoiler(value: string) {
     if (!progress || !spoilerOptions.some((option) => option.value === value)) return;
@@ -63,7 +58,7 @@ export function ProgressSettings({ state, cloudStatus }: { state: ReturnType<typ
           <BottomSheet.Content className="settings-sheet">
             <BottomSheet.Header>
               <BottomSheet.Title>진행도·설정</BottomSheet.Title>
-              <BottomSheet.Description>{cloudStatus ? "브라우저 기록과 서버에 보관할 기록을 관리해요." : "이 브라우저의 기록과 스포일러 설정을 관리해요."}</BottomSheet.Description>
+              <BottomSheet.Description>이 브라우저의 기록과 스포일러 설정을 관리해요.</BottomSheet.Description>
             </BottomSheet.Header>
             <BottomSheet.Body>
               {!progress ? <p role="status">저장된 기록을 확인하고 있어요.</p> : (
@@ -113,63 +108,6 @@ export function ProgressSettings({ state, cloudStatus }: { state: ReturnType<typ
                     )}
                   </section>
 
-                  {cloudStatus && <section aria-labelledby="cloud-title" className="border-t border-stroke-neutral-muted pt-x5">
-                    <h2 id="cloud-title" className="mb-x3 t4-bold">다른 기기에서 이어하기</h2>
-                    {cloudStatus !== "signed-in" ? (
-                      <>
-                        <p className="mb-x3 t3-regular text-fg-neutral-muted">
-                          {cloudStatus === "unconfigured" ? "로그인 연결을 준비하고 있어요." : cloudStatus === "unavailable" ? "로그인 서버에 연결하지 못했어요." : "로그인 후 서버에 기록을 보관할 수 있어요."}
-                          {" "}이 브라우저의 기록은 그대로 유지돼요.
-                        </p>
-                        <ActionButton asChild size="medium" variant="neutralOutline"><Link href="/login">로그인 안내</Link></ActionButton>
-                      </>
-                    ) : (
-                      <div className="flex flex-col items-start gap-x3">
-                        <p className="t3-regular text-fg-neutral-muted">로그인되어 있어요. 저장하거나 가져올 기록을 직접 선택해 주세요.</p>
-                        <ActionButton size="medium" variant="neutralOutline" disabled={cloudPending} onClick={() => startCloudTransition(async () => {
-                          try {
-                            const result = await readCloudProgress();
-                            if (result.ok) {
-                              setCloud({ progress: result.progress, revision: result.revision });
-                              setNotice(result.progress ? "서버 기록을 확인했어요. 가져오기 또는 서버에 저장을 선택해 주세요." : "서버에 저장된 기록이 없어요.");
-                            } else setNotice(result.message);
-                          } catch {
-                            setNotice("서버에 연결하지 못했어요. 로컬 기록과 백업은 계속 이용할 수 있어요.");
-                          }
-                        })}>서버 기록 확인</ActionButton>
-                        {cloud && (
-                          <>
-                            <p className="t3-regular">서버: 완료한 역 {cloud.progress?.completedStopIds.length ?? 0}개 · 힌트 {cloud.progress?.revealedHintIds.length ?? 0}개</p>
-                            {cloud.progress && <ActionButton size="medium" variant="neutralOutline" disabled={cloudPending} onClick={() => {
-                              if (window.confirm("현재 브라우저 기록과 스포일러 설정을 서버 기록으로 교체할까요? 필요하면 먼저 백업해 주세요.")) {
-                                if (commit(cloud.progress!)) setNotice("서버 기록을 이 브라우저에 가져왔어요.");
-                              }
-                            }}>서버 기록 가져오기</ActionButton>}
-                            <ActionButton size="medium" variant="neutralSolid" disabled={cloudPending} onClick={() => {
-                              if (cloud.progress && !window.confirm("현재 브라우저 기록으로 서버 기록을 교체할까요?")) return;
-                              startCloudTransition(async () => {
-                                try {
-                                  const result = await writeCloudProgress(JSON.stringify(progress), cloud.revision);
-                                  if (result.ok) {
-                                    setCloud({ progress: result.progress, revision: result.revision });
-                                    setNotice("현재 기록을 서버에 저장했어요.");
-                                  } else {
-                                    setCloud(null);
-                                    setNotice(result.message);
-                                  }
-                                } catch {
-                                  setCloud(null);
-                                  setNotice("서버에 연결하지 못했어요. 로컬 기록은 유지됩니다.");
-                                }
-                              });
-                            }}>현재 기록을 서버에 저장</ActionButton>
-                          </>
-                        )}
-                        <form action={signOut}><ActionButton size="small" variant="ghost" type="submit">로그아웃</ActionButton></form>
-                      </div>
-                    )}
-                  </section>}
-
                   {storageNotice && <p role="alert" className="rounded-r3 bg-bg-informative-weak p-x4 t3-regular">{storageNotice}</p>}
                   {protectedRaw !== null && (
                     <ActionButton variant="neutralOutline" size="medium" onClick={() => {
@@ -180,7 +118,7 @@ export function ProgressSettings({ state, cloudStatus }: { state: ReturnType<typ
                   )}
                   <p role="status" className="t3-regular">{notice}</p>
                   <p className="t2-regular text-fg-neutral-muted">
-                    {cloudStatus ? "브라우저 데이터 삭제 시 로컬 기록이 사라질 수 있어요. 서버에는 로그인 후 직접 저장한 기록만 보내요." : "기록은 이 브라우저에 저장돼요. 브라우저 데이터를 삭제하거나 기기를 바꾸기 전에 백업을 보관해 주세요."}
+                    기록은 이 브라우저에 저장돼요. 브라우저 데이터를 삭제하거나 기기를 바꾸기 전에 백업을 보관해 주세요.
                   </p>
                 </div>
               )}

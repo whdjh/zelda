@@ -4,7 +4,7 @@
 
 '가장 짧은 지도 경로'가 아니라 **보통 실력 이용자의 안전하고 빠른 엔딩**을 위한 한국어 시오 모바일 내비게이션. 퍼즐은 직접 풀 재미를 지키고 답은 요청받을 때만 공개한다.
 
-현재 우선순위는 **시작부터 엔딩까지의 전체 공략 조사·작성과 UI 연결 → 판본/플레이 검수 → 로그인/서버 저장**이다. 출처 기반 초안을 앱에서 검수하되 플레이 검증 완료로 표시하지 않는다. 기존 Supabase 준비 코드는 보존하며 공략 제작을 계정 설정에 종속시키지 않는다. 전체 공략은 스토리·던전·보스·퍼즐을 포함하고 100% 수집의 세부 범위는 별도 확정한다.
+현재 범위는 **메인 `/` 하나에서 노선·공략·힌트·로컬 진행도·백업을 사용하는 것**이다. 네비바·사이드바·별도 역/퍼즐/로그인 페이지와 미래 기능 준비 코드는 두지 않는다. 출처 기반 초안을 앱에서 검수하되 플레이 검증 완료로 표시하지 않는다. 전체 공략은 스토리·던전·보스·퍼즐을 포함하고 100% 수집의 세부 범위는 별도 확정한다.
 
 ## 먼저 읽을 문서
 
@@ -12,13 +12,13 @@
 2. 공략: `docs/game/01-route-criteria.md`, `docs/game/02-research-protocol.md`, `docs/game/04-hint-policy.md`
 3. UI: `docs/design/03-ux-flows.md`, `docs/design/04-component-guidelines.md`, `docs/design/05-seed-token-policy.md`
 4. 상태/콘텐츠: `docs/architecture/01-technical-design.md`, `docs/architecture/02-content-model.md`, `docs/architecture/03-progress-routing.md`
-5. 서버: `docs/architecture/04-backend-auth.md`
+5. 후속 후보: `docs/product/05-future-expansion.md` (현재 구현 범위 아님)
 6. 개발/검증: `docs/development/01-local-setup.md`, `docs/development/02-project-status.md`, `docs/quality/01-validation.md`, `docs/quality/02-rights-privacy.md`
 
 ## 절대 지킬 규칙
 
 1. **사실을 지어내지 않는다.** 게임의 한국어 이름/조건/경로/단축 시간은 `판본 + 출처 + 검증 상태`를 기록한다. Switch 2판에서 검증 안 한 과거판 공략은 미검증으로 남긴다.
-2. **합의한 기술 선택을 임의로 뒤집지 않는다.** Next.js + TS, SEED, Tailwind v4 + SEED 토큰, 필요 시 CSS Modules, `useState`와 조건부 Context, localStorage 백업이 현재 사용 흐름이다. **Next.js 서버 기능 + Supabase PostgreSQL/Auth**는 후속 연결용 준비 코드로 보존한다. **Jotai/Zustand와 별도 Express/Django 서버는 실제 필요 전 도입 금지**.
+2. **합의한 기술 선택을 임의로 뒤집지 않는다.** Next.js + TS, SEED, Tailwind v4 + SEED 토큰, 필요 시 CSS Modules, `useState`와 조건부 Context, localStorage 백업이 현재 사용 흐름이다. **Next.js 서버 기능 + Supabase PostgreSQL/Auth**는 후속 도입 시의 기술 선택이며 준비 코드·의존성은 두지 않는다. **Jotai/Zustand와 별도 Express/Django 서버는 실제 필요 전 도입 금지**.
 3. **SEED 토큰을 재사용한다.** Primitive/Semantic 토큰을 중복 생성하거나 토스 3단계 체계를 복제하지 않는다. 프로젝트 고유 상태/노선도에 필요한 예외만 정의하고 기록한다.
 4. **컴포넌트 책임을 먼저 정한다.** SEED Button/Sheet 같은 래퍼, `Base*`/`Generic*`/`Universal*` 등의 미래 확장용 추상화 금지. 실제 중복 또는 독립적인 동작·접근성 책임이 있을 때만 추출.
 5. **최소 상태부터 시작한다.** 로컬 UI에는 `useState`. 공유 경계에서 실제 props drilling이 있을 때만 `useContext`. Context를 전역 저장소로 남용하지 않는다.
@@ -26,7 +26,7 @@
 7. **스포일러는 단계적으로 공개한다.** 기본은 완료/현재/다음 목적지만. 미래 구간은 이름을 숨기거나 잠금으로 표현하고, 정답은 명시적 동작 때만 DOM에 나타나게 한다. 블러만을 보호 수단으로 쓰지 않는다.
 8. **권리 침해를 피한다.** 외부 영상·이미지·지도·공략 문장 복제 금지. 자체 문구·자체 도형 우선, 직접 녹화도 자동으로 사용 허가가 생기는 건 아니다.
 9. **저장과 장애 처리.** `localStorage` 스키마 버전, 백업·복원, 파손된 JSON 및 스토리지 제한, SSR hydration 차이를 검증.
-10. **서버의 권한 경계를 지킨다.** Server Action마다 인증 사용자를 검증하고 입력/콘텐츠 ID를 검사한다. DB는 `auth.uid() = user_id` RLS 적용. 사용자 ID를 클라이언트 입력에서 신뢰하지 않는다. 서비스 역할 키는 사용하지 않는다. 서버 상태와 UI 상태를 분리하고 버전 충돌을 덮어쓰지 않는다.
+10. **서버를 추후 도입할 때 권한 경계를 지킨다.** Server Action마다 인증 사용자를 검증하고 입력/콘텐츠 ID를 검사한다. DB는 `auth.uid() = user_id` RLS 적용. 사용자 ID를 클라이언트 입력에서 신뢰하지 않는다. 서비스 역할 키는 사용하지 않는다. 서버 상태와 UI 상태를 분리하고 버전 충돌을 덮어쓰지 않는다.
 11. **좋아 보인다는 이유만으로 추가하지 않는다.** 새 라이브러리/컴포넌트/상태 계층/페이지는 어떤 실제 사용자 문제를 해결하는지 PR에 기록한다.
 
 ## 공략 작성 프로세스
@@ -36,10 +36,10 @@
 ## 개발 명령과 코드 위치
 
 - Node 24, npm. `npm ci`, `npm run dev`, `npm run check`, `npm run build`, `npm run test:e2e`.
-- 앱: `src/app`; 고유 UI: `src/components`; 순수 로직/저장: `src/lib`; 서버 전용: `src/lib/supabase`; DB: `supabase/migrations`.
+- 앱: `src/app`; 고유 UI: `src/components`; 순수 로직/저장: `src/lib`.
 - 공략: `content/ocarina-of-time/index.ts`, 본문 `story.ts`, 힌트 `puzzles.ts`, 출처 `sources.ts`. 현재 30역/31문제의 출처 기반 초안이며 직접 플레이 검증으로 오인하지 않는다. 조사 근거·판본·검증 상태를 갖춘 데이터만 추가하고 가상 데이터는 테스트 파일 안에서만 사용한다.
 - 라이브러리 설정/API는 Context7의 resolve-library-id → query-docs 순으로 최신 공식 문서를 확인한다. Next.js 설치판 문서는 `node_modules/next/dist/docs`에도 있다.
-- 환경변수는 `.env.local`, 예시는 `.env.example`. 키/쿠키/이메일을 로그에 남기지 않는다. 원격 프로젝트 생성·비용 발생·기존 데이터 삭제는 사용자 판단을 받는다.
+- 현재 실행에 환경변수가 필요하지 않다. 키/쿠키/이메일을 로그에 남기지 않는다. 원격 프로젝트 생성·비용 발생·기존 데이터 삭제는 사용자 판단을 받는다.
 
 ## 자동 커밋 규칙
 

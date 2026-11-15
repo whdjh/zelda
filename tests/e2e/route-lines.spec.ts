@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 test("노선은 화면 폭에 늘어나지 않고 연결선이 다른 역을 관통하지 않는다", async ({ page }, testInfo) => {
-  await page.goto("/oot/route");
+  await page.goto("/");
   const map = page.getByRole("region", { name: "모험 환승 노선도" });
   await expect(map.getByRole("button")).toHaveCount(30);
   for (const width of [testInfo.project.use.viewport!.width, 1280]) {

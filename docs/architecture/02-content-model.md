@@ -14,7 +14,7 @@
 - 정적 데이터: [시오 진입점](../../content/ocarina-of-time/index.ts), 현재 `oot-draft-1` / `oot-switch2-2026`. 30개 역·31개 문제·21개 보유 조건이 있다. 본문/힌트/출처 파일을 분리했다.
 - Verification은 출처 ID/판본/상태와 선택적 검증일·evidence·caveat를 갖는다. source는 ID/제목/HTTPS URL/출처 판본을 기록한다. item에도 검증 메타를 둔다.
 - GuideContent는 version/gameVersion과 sources/items/stops/puzzles를 보유한다. Hint의 마지막 단계가 해법이며 총 1~3단계다.
-- 사용자 스냅샷은 로컬과 서버에서 같은 스키마를 사용한다. 서버의 사용자/작품/판본/revision 메타는 [백엔드 설계](04-backend-auth.md)처럼 별도로 보관한다.
+- 사용자 스냅샷은 localStorage와 JSON 백업에서 같은 스키마를 사용한다. 현재 서버 메타와 저장 코드는 없다.
 - AI 추천은 추후 검증된 ID를 사용할 수 있게 하되 현재 임의 메타/AI 테이블을 만들지 않는다.
 
 ## 초기 설계 예시 (구현의 전체 타입은 위 파일 기준)

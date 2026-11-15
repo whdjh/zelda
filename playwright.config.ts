@@ -16,9 +16,8 @@ export default defineConfig({
   ],
   webServer: {
     command: "npm run dev -- --hostname 127.0.0.1 --port 3100",
-    url: "http://127.0.0.1:3100/oot",
+    url: "http://127.0.0.1:3100/",
     reuseExistingServer: false,
-    env: { SUPABASE_URL: "", SUPABASE_PUBLISHABLE_KEY: "" },
     timeout: 120_000,
   },
 });

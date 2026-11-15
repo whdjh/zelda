@@ -52,7 +52,7 @@ export function RouteMap({ stops, progress, onSelect, view }: {
       <div className="flex flex-wrap gap-x2">{stops.filter((stop) => progress.completedStopIds.includes(stop.id)).map((stop) => <ActionButton key={stop.id} size="small" variant="neutralWeak" onClick={() => onSelect(stop.id)}>✓ {stop.title}</ActionButton>)}</div>
     </details>}
     {!layers.length ? <p className="py-x6 t4-bold">이 목적지까지 남은 구간이 없어요. 다른 목적지를 선택하거나 기록을 수정할 수 있어요.</p> : <>
-      <p id="map-help" className="mb-x3 t2-regular text-fg-neutral-muted">마우스를 올리거나 길게 누르면 이름, 한 번 누르면 상세 안내가 열려요. 실선은 선행 구간, 점선은 장비 준비예요.</p>
+      <p id="map-help" className="sr-only">역에 포커스하면 이름, 선택하면 상세 안내를 확인할 수 있어요. 실선은 선행 구간, 점선은 장비 준비예요.</p>
       <div className={styles.viewport} tabIndex={0} role="region" aria-label="모험 환승 노선도" aria-describedby="map-help">
         <div className={styles.canvas} style={{ width, height }}>
           <svg aria-hidden="true" width={width} height={height} viewBox={`0 0 ${width} ${height}`} className={styles.lines}>

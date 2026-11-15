@@ -31,7 +31,7 @@ route_feedback { stop_id: '...', category: 'wrong'|'unclear'|'helpful' }
 
 ## SEO 테스트
 
-- 각 역/퍼즐 고유 URL에 검색 친화적인 `<title>`, 설명, canonical(필요 시).
+- 현재 메인 URL의 `<title>`과 설명만 관리한다. 역/퍼즐별 페이지는 만들지 않는다.
 - 검색 크롤러가 사용할 HTML 본문에 공개 가능한 정보를 제공. 모든 정보를 클라이언트 렌더로만 표시하지 않음.
 - 숨겨야 하는 정답은 SEO 메타나 OG 이미지에 넣지 않음.
 - Sitemap, robots 설정, 페이지 오류, 모바일 성능 확인.

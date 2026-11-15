@@ -9,7 +9,7 @@ export default function ErrorPage({ reset }: { reset: () => void }) {
     <p className="mb-x5 t4-regular text-fg-neutral-muted">연결을 확인하고 다시 시도해 주세요. 브라우저 기록은 삭제하지 않았어요.</p>
     <div className="flex flex-wrap gap-x3">
       <ActionButton variant="neutralSolid" onClick={reset}>다시 시도</ActionButton>
-      <ActionButton asChild variant="neutralOutline"><Link href="/oot">모험 홈으로</Link></ActionButton>
+      <ActionButton asChild variant="neutralOutline"><Link href="/">모험 홈으로</Link></ActionButton>
     </div>
   </main>;
 }

@@ -16,17 +16,16 @@
 | 루트 README / START-HERE / AGENTS | 실행 입구 / 제품 요약 / AI 작업 규칙 |
 | product / game / design | 요구사항 / 게임 조사·힌트 원칙 / UX·토큰 |
 | architecture / decisions | 현재 기술 설계·데이터 / 변경 이유와 폐기된 결정 |
-| development | 실행법·구현 현황·외부 계정 설정 |
+| development | 실행법·구현 현황 |
 | research / quality / operations | 출처·조사 기록 / 검증·권리 / 출시·측정 |
 | ../content | 실제 배포할 공략 데이터. 조사 문서와 분리 |
 
-우선순위는 최신 사용자 지시 → 현재 ADR → 각 분야 설계다. **백엔드 제외 ADR-004는 폐기**하고 ADR-011의 Supabase 인증/DB를 채택했다. ADR-013에 따라 현재는 전체 공략집 제작이 우선이며 로그인 연결은 후순위다. 기존 분야별 경로는 유지하고 실행/설정 설명은 아래 개발 문서로 모았다.
+우선순위는 최신 사용자 지시 → 현재 ADR → 각 분야 설계다. ADR-016에 따라 메인 /와 핵심 기능만 유지한다. 로그인·서버 저장 준비 코드와 별도 설정 문서는 제거하고 후속 후보 문서로 정리했다. 이전 구현과 검증 기록은 Git 이력 및 상태 문서에서 확인한다.
 
 ## 개발 시작과 사용자 설정
 
 - [로컬 실행·폴더 구조·검증 명령](./development/01-local-setup.md)
 - [구현/미구현/미검증 상태](./development/02-project-status.md)
-- [후속 로그인 연결 시 Supabase 설정](./development/03-supabase-setup.md)
 
 ## 제품·타깃·경쟁
 
@@ -57,7 +56,6 @@
 - [기술 설계(Next/SEED/Tailwind/React state)](./architecture/01-technical-design.md)
 - [공략 데이터와 사용자 상태 구조](./architecture/02-content-model.md)
 - [규칙 기반 재계산·localStorage·Context 판단](./architecture/03-progress-routing.md)
-- [Supabase 백엔드·인증·사용자별 진행도](./architecture/04-backend-auth.md)
 
 ## 검증·권리·성과
 
