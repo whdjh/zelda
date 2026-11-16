@@ -35,6 +35,7 @@ export function selectRoute(stops: RouteStop[], progress: Progress) {
     return !r.stops.length && !r.items.length && !r.age;
   };
   const candidates = remaining.filter((stop) => needed.has(stop.id));
+  // 준비된 후보를 콘텐츠 순서로 고른다. 이동 시간·재도전 비용을 최적화하는 계산은 아니다.
   const current = candidates.find(ready) ?? candidates.find((stop) => !dependencies[stop.id].length);
   const next = candidates.find((stop) => stop.id !== current?.id && dependencies[stop.id].every((id) => id === current?.id));
   // 완료 기록에서 그래프를 자르고 위상 단계별로 다시 배치한다. 순환은 콘텐츠 검사에서 차단한다.

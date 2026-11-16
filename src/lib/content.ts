@@ -4,6 +4,7 @@ export type Verification = {
   status: VerificationStatus;
   version: string;
   sourceIds: string[];
+  guideSourceId?: string;
   verifiedAt?: string;
   evidence?: string;
   caveat?: string;

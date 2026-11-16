@@ -8,7 +8,7 @@ export const routeRules: Record<string, { before: string[]; rewards: string[]; s
   "royal-meeting": { before: ["deku-guardian"], rewards: ["royal-letter-lullaby"], sources: ["gw-castle"], note: "성에서 받은 편지와 곡은 이후 준비 조건으로 따로 확인합니다." },
   "mountain-access": { before: ["royal-meeting"], rewards: ["goron-bracelet"], sources: ["zd-dodongo"], note: "편지·노래를 이용하는 산길 준비 구간입니다." },
   "dodongo-tools": { before: ["mountain-access"], rewards: ["bomb-bag"], sources: ["gw-dodongo"], note: "폭탄을 얻은 시점과 동굴의 보스 완료는 별개로 기록합니다." },
-  "dodongo-guardian": { before: ["dodongo-tools"], rewards: ["din-fire"], sources: ["gw-dodongo", "nl-fairies"], note: "보스 뒤 산 정상의 샘도 확인하세요. 마법은 직접 습득했을 때만 보유로 표시합니다." },
+  "dodongo-guardian": { before: ["dodongo-tools"], rewards: ["din-fire"], sources: ["gw-fairies", "nl-fairies"], note: "보스 뒤 산 정상의 샘도 확인하세요. 마법은 직접 습득했을 때만 보유로 표시합니다." },
   "zora-audience": { before: ["royal-meeting"], rewards: ["bottle"], sources: ["gw-jabu"], note: "이 안내의 강길은 폭탄을 사용합니다. 동굴 보스 완료를 강의 진입 조건으로 붙이지 않습니다." },
   "jabu-rescue": { before: ["zora-audience"], rewards: ["boomerang"], sources: ["gw-jabu"], note: "병을 이용해 입장하고 부메랑을 찾는 구간입니다." },
   "jabu-guardian": { before: ["jabu-rescue"], rewards: [], sources: ["gw-jabu"], note: "이 구간 완료는 다른 두 정령석의 획득을 뜻하지 않습니다." },
@@ -29,7 +29,7 @@ export const routeRules: Record<string, { before: string[]; rewards: string[]; s
   "spirit-child": { before: ["forest-guardian"], rewards: ["silver-gauntlets"], sources: ["gw-spirit", "gw-well"], note: "소년으로 돌아가는 조건과 사막 귀환곡이 합류합니다." },
   "spirit-adult": { before: ["spirit-child"], rewards: ["mirror-shield"], sources: ["gw-spirit"], note: "소년 구간의 장비를 갖추고 청년으로 돌아와 진행합니다." },
   "spirit-guardian": { before: ["spirit-adult"], rewards: ["light-arrows"], sources: ["gw-spirit"], note: "빛의 화살은 신전 완료만으로 자동 획득하지 않습니다. 다른 신전 진행과 시간의 신전 사건을 확인하세요." },
-  "castle-barriers": { before: ["forest-guardian", "fire-guardian", "water-guardian", "shadow-guardian", "spirit-guardian"], rewards: [], sources: ["gw-ganon-castle"], note: "다섯 신전 경로의 합류 지점입니다. 여섯 결계 내부의 세부 분기는 아직 하나의 구간으로 안내합니다." },
+  "castle-barriers": { before: ["forest-guardian", "fire-guardian", "water-guardian", "shadow-guardian", "spirit-guardian"], rewards: [], sources: ["gw-ganon-castle"], note: "특수 우회를 쓰지 않는 이 안내에서는 다섯 신전 경로를 합칩니다. 게임 내부의 최소 이벤트 조건이나 최단 경로를 뜻하지 않습니다. 여섯 결계는 한 구간으로 안내합니다." },
   "tower-escape": { before: ["castle-barriers"], rewards: [], sources: ["gw-ganon-castle"], note: "결계 해제 뒤 탑과 탈출로 이어집니다." },
   "final-battle": { before: ["tower-escape"], rewards: [], sources: ["gw-ganon"], note: "엔딩 확인은 사용자가 직접 기록합니다." },
 };

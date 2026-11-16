@@ -9,6 +9,7 @@ const chapters = [
   ["water", "물의 신전", "563388"], ["well", "우물", "563387"],
   ["shadow", "어둠의 신전", "563386"], ["gerudo", "겔드 요새", "563385"],
   ["spirit", "혼의 신전", "563384"], ["ganon-castle", "최종 성", "563383"],
+  ["time", "시간의 신전", "587159"], ["fairies", "대요정 샘", "563324"],
   ["gohma", "첫 던전 보스", "563406"], ["king-dodongo", "동굴 보스", "563405"],
   ["barinade", "자부자부 보스", "563404"], ["phantom", "숲의 신전 보스", "563403"],
   ["volvagia", "불의 신전 보스", "563402"], ["morpha", "물의 신전 보스", "563400"],
@@ -43,7 +44,15 @@ sources.push(...[
   ["fb-songs", "FinalBoss · 곡과 습득 조건", "https://finalboss.io/zelda-oot-switch-2-ocarina-songs"],
 ].map(([id, title, url]) => ({ id, title, url, version: gameVersion })));
 
+// 앱의 읽기 링크만 통일한다. sourceIds는 실제 집필·교차조사 근거로 보존한다.
+const guideChapters: Record<string, string> = {
+  "zd-dodongo": "gw-dodongo", "zd-time": "gw-time",
+  "nl-ice": "gw-ice", "nl-fire": "gw-fire", "nl-water": "gw-water",
+};
+
 export function draft(sourceIds: string[], caveat?: string): Verification {
-  return { status: "proposed", version: gameVersion, sourceIds,
+  const guideSourceId = sourceIds.find((id) => id.startsWith("gw-")) ?? guideChapters[sourceIds[0]];
+  if (!guideSourceId) throw new Error(`참고 공략이 없는 출처: ${sourceIds.join(", ")}`);
+  return { status: "proposed", version: gameVersion, sourceIds, guideSourceId,
     caveat: caveat ?? "출처를 참고해 작성한 초안입니다. 직접 플레이 미검증이며, 일부 이름은 통용명·자체 제목으로 공식 한글 표기를 확인해야 합니다." };
 }

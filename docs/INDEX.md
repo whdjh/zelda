@@ -71,6 +71,7 @@
 - [경로 후보 비교·판정 템플릿](./research/03-route-decision-template.md)
 - [첫 장비 준비: 사실 대조와 자체 공략 초안](./research/04-oot-opening.md)
 - [전 구간 본문·힌트·출처와 미검증 과제](./research/05-oot-story-draft.md)
+- [엔딩 경로 시간 검토와 참고 사이트 통일](./research/07-route-speed-audit.md)
 - [게임 공략 데이터 입력 규칙](../content/ocarina-of-time/README.md)
 
 ## 문서 해석 기준

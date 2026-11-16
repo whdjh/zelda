@@ -87,3 +87,23 @@ test("목적지는 백업 검증 대상이며 이전 기본 공개 설정을 전
   assert.throws(() => parseProgress(JSON.stringify({ ...progress, goalStopId: "invalid" }), ootContent), /목적지/);
   assert.equal(parseProgress(JSON.stringify({ ...progress, spoilerLevel: "default" }), ootContent).spoilerLevel, "full");
 });
+
+
+test("모든 공략·조건·힌트·팁의 읽기 링크는 GameWith이며 조사 출처는 보존한다", () => {
+  const entries = [
+    ...ootContent.items.map((entry) => entry.verification),
+    ...ootContent.stops.flatMap((entry) => [entry.verification, entry.routeVerification!]),
+    ...ootContent.puzzles.map((entry) => entry.verification),
+    ...(ootContent.tips ?? []).map((entry) => entry.verification),
+  ];
+  for (const entry of entries) {
+    const guide = ootContent.sources.find((source) => source.id === entry.guideSourceId);
+    assert.ok(guide, entry.sourceIds.join(", "));
+    assert.equal(new URL(guide.url).hostname, "gamewith.jp");
+    assert.equal(guide.version, ootContent.gameVersion);
+  }
+  assert.ok(entries.some((entry) => entry.sourceIds.includes("nl-ice")));
+  const invalid = structuredClone(ootContent);
+  invalid.stops[0].verification.guideSourceId = "missing-guide";
+  assert.ok(validateContent(invalid).some((error) => error.includes("없는 참고 공략")));
+});

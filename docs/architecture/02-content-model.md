@@ -10,6 +10,8 @@
 
 ## 구현 기준
 
+- `Verification.guideSourceId`는 앱에서 여는 GameWith 참고 공략이다. `sourceIds`는 실제 집필·교차조사 근거로 별도 보존한다. 참고 링크 통일로 사실의 출처나 검증 상태를 바꾸지 않는다.
+
 - 실제 타입: [content.ts](../../src/lib/content.ts), [progress-storage.ts](../../src/lib/progress-storage.ts).
 - 정적 데이터: [시오 진입점](../../content/ocarina-of-time/index.ts), 현재 `oot-draft-1` / `oot-switch2-2026`. 30개 역·31개 문제·21개 보유 조건이 있다. 본문/힌트/출처/노선 조건(routes.ts)을 분리했다. rewardItemIds는 획득 경유용이며 자동 보상이 아니다. routeVerification에 연결 근거를 남긴다.
 - Verification은 출처 ID/판본/상태와 선택적 검증일·evidence·caveat를 갖는다. source는 ID/제목/HTTPS URL/출처 판본을 기록한다. item에도 검증 메타를 둔다.

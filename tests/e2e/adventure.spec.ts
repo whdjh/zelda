@@ -155,6 +155,9 @@ test("전체 공개에서 모든 역의 상세 본문과 연결을 확인한다"
   for (const stop of ootContent.stops) {
     await page.getByRole("button", { name: `${stop.title} ·`, exact: false }).click();
     const dialog = page.getByRole("dialog", { name: stop.title, exact: true });
+    const guideLinks = await dialog.locator("aside a[href]").evaluateAll((links) => links.map((link) => (link as HTMLAnchorElement).href));
+    expect(guideLinks.length).toBeGreaterThan(0);
+    for (const href of guideLinks) expect(new URL(href).hostname).toBe("gamewith.jp");
     await expect(dialog.getByRole("region", { name: "상세 공략", exact: true })).toHaveCount(0);
     await dialog.getByRole("button", { name: "상세 공략·해법 보기" }).click();
     await expect(dialog.getByRole("region", { name: "상세 공략", exact: true }).getByRole("listitem")).toHaveText(stop.walkthrough!);

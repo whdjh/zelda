@@ -21,6 +21,7 @@ export function validateContent(content: GuideContent): string[] {
 
   function verification(value: Verification, id: string) {
     if (value.version !== content.gameVersion) errors.push(`${id}: 대상 게임판이 다릅니다.`);
+    if (value.guideSourceId && !sources.has(value.guideSourceId)) errors.push(`${id}: 없는 참고 공략 ${value.guideSourceId}`);
     if (value.sourceIds.length === 0) errors.push(`${id}: 출처가 필요합니다.`);
     for (const sourceId of value.sourceIds) {
       const source = sources.get(sourceId);
