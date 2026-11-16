@@ -27,6 +27,7 @@
 
 - 출처: `content/ocarina-of-time/sources.ts`. 추가된 Nintendo Life 4개와 FinalBoss 1개는 본문을 열람했다. 같은 편집처의 여러 페이지를 독립 출처로 세지 않는다.
 - 조건: `content/ocarina-of-time/routes.ts`. 각 역마다 `before`, `rewards`, `sources`, `note`를 명시한다. 배열의 앞 원소를 필수 조건으로 쓰지 않는다.
+- 상황별 팁: `tips.ts`의 4개 항목. 역 ID·자체 문장·출처·판본·초안 상태를 묶고 콘텐츠 검사에서 참조를 검증한다.
 - 기존 목표·본문·힌트: `story.ts`, `puzzles.ts`. 최초 집필 범위는 [05 기록](05-oot-story-draft.md)을 따른다. 이번에 모든 방의 본문을 재검수한 것은 아니다.
 - `before`는 현재 안내 경로의 이벤트/구간 조건, 기존 `prerequisiteItemIds`는 보유 조건이다. 보유가 확인된 장비의 획득 경유를 제거할 수 있지만, 해당 역을 자동 완료하지 않는다.
 - `rewards`는 그 구간에서 확인할 수 있는 획득물 목록이지 완료 보상이 자동 지급된다는 뜻이 아니다. 롱샷처럼 보스 전에 획득한 장비도 따로 체크한다.

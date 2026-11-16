@@ -11,7 +11,7 @@
 ## 구현 기준
 
 - 실제 타입: [content.ts](../../src/lib/content.ts), [progress-storage.ts](../../src/lib/progress-storage.ts).
-- 정적 데이터: [시오 진입점](../../content/ocarina-of-time/index.ts), 현재 `oot-draft-1` / `oot-switch2-2026`. 30개 역·31개 문제·21개 보유 조건이 있다. 본문/힌트/출처 파일을 분리했다.
+- 정적 데이터: [시오 진입점](../../content/ocarina-of-time/index.ts), 현재 `oot-draft-1` / `oot-switch2-2026`. 30개 역·31개 문제·21개 보유 조건이 있다. 본문/힌트/출처/노선 조건(routes.ts)을 분리했다. rewardItemIds는 획득 경유용이며 자동 보상이 아니다. routeVerification에 연결 근거를 남긴다.
 - Verification은 출처 ID/판본/상태와 선택적 검증일·evidence·caveat를 갖는다. source는 ID/제목/HTTPS URL/출처 판본을 기록한다. item에도 검증 메타를 둔다.
 - GuideContent는 version/gameVersion과 sources/items/stops/puzzles를 보유한다. Hint의 마지막 단계가 해법이며 총 1~3단계다.
 - 사용자 스냅샷은 localStorage와 JSON 백업에서 같은 스키마를 사용한다. 현재 서버 메타와 저장 코드는 없다.
@@ -60,6 +60,7 @@ type SavedProgress = {
   revealedHintIds: string[];
   spoilerLevel: SpoilerLevel;
   age?: 'unknown' | 'child' | 'adult'; // 기존 기록의 누락은 unknown으로 읽음
+  goalStopId?: string;         // 선택 목적지, 누락 시 엔딩
   updatedAt: string;
 };
 ```

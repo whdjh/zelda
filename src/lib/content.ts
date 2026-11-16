@@ -32,6 +32,7 @@ export type GuideContent = {
   sources: { id: string; title: string; url: string; version: string }[];
   items: { id: string; title: string; verification: Verification }[];
   stops: RouteStop[];
+  tips?: { id: string; stopIds: string[]; title: string; text: string; verification: Verification }[];
   puzzles: {
     id: string;
     stopId: string;

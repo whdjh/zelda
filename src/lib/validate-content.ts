@@ -82,6 +82,11 @@ export function validateContent(content: GuideContent): string[] {
       if (puzzles.get(id)?.stopId !== stop.id) errors.push(`${stop.id}: 퍼즐 ${id}의 소속이 다릅니다.`);
     }
   }
+  for (const tip of content.tips ?? []) {
+    register(tip.id); text(tip.title, tip.id); text(tip.text, tip.id); verification(tip.verification, tip.id);
+    if (!tip.stopIds.length) errors.push(`${tip.id}: 팁을 연결할 역이 필요합니다.`);
+    for (const id of tip.stopIds) if (!stops.has(id)) errors.push(`${tip.id}: 없는 연결 역 ${id}`);
+  }
   for (const puzzle of content.puzzles) {
     register(puzzle.id);
     text(puzzle.name, puzzle.id);

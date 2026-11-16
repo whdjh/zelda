@@ -2,6 +2,7 @@ import type { GuideContent } from "../../src/lib/content.ts";
 import { draft, gameVersion, sources } from "./sources.ts";
 import { story } from "./story.ts";
 import { puzzles } from "./puzzles.ts";
+import { routeTips } from "./tips.ts";
 import { routeData } from "./routes.ts";
 
 const equipment = [
@@ -20,7 +21,7 @@ const equipment = [
 
 export const ootContent: GuideContent = {
   // 빈 초안의 기존 백업과 호환되도록 버전은 유지한다. ID를 바꾸는 수정은 별도 마이그레이션이 필요하다.
-  version: "oot-draft-1", gameVersion, sources, puzzles,
+  version: "oot-draft-1", gameVersion, sources, puzzles, tips: routeTips,
   items: equipment.map(([id, title, source]) => ({ id, title, verification: draft([source]) })),
   stops: story.map(({ sourceIds, ...stop }) => ({
     ...stop, kind: "required",

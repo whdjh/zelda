@@ -102,6 +102,10 @@ export function RouteGuide({ state }: { state: ReturnType<typeof useProgress> })
                   <ol className="list-decimal space-y-x3 pl-x5 t3-regular">{selected.walkthrough.map((line, index) => <li key={index}>{line}</li>)}</ol>
                   <ActionButton className="mt-x3 min-h-x11" variant="neutralOutline" onClick={() => setWalkthroughId(null)}>상세 공략 접기</ActionButton>
                 </section> : <ActionButton className="min-h-x11" variant="neutralOutline" onClick={() => setWalkthroughId(selected.id)}>상세 공략·해법 보기</ActionButton>)}
+                {ootContent.tips?.filter((tip) => tip.stopIds.includes(selected.id)).map((tip) => <details key={tip.id} className="rounded-r3 bg-bg-neutral-weak p-x4">
+                  <summary className="min-h-x11 cursor-pointer t3-bold">팁 · {tip.title}</summary>
+                  <p className="t3-regular">{tip.text}</p><ContentSources verification={tip.verification} />
+                </details>)}
                 {selected.puzzleIds.map((id) => <ActionButton key={id} variant="neutralOutline" className="min-h-x11" aria-expanded={puzzleId === id} onClick={() => setPuzzleId(puzzleId === id ? null : id)}>힌트: {ootContent.puzzles.find((entry) => entry.id === id)?.name}</ActionButton>)}
                 {puzzle && puzzle.stopId === selected.id && <div>
                   <HintReveal puzzle={puzzle} revealedIds={progress.revealedHintIds} onReveal={reveal} />
