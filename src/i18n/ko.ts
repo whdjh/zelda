@@ -13,6 +13,8 @@ export const ko = {
     submitting: "불러오는 중...",
     loading: "불러오는 중...",
     switchId: "아이디 변경",
+    accountSheetTitle: "모험 아이디",
+    closeSheet: "닫기",
     validation: {
       empty: "아이디를 입력해 주세요.",
       pii: "이메일·전화번호 대신 별명을 적어 주세요.",
@@ -29,6 +31,7 @@ export const ko = {
     showSolution: "해법 보기",
     solveNow: "바로 정답",
     completeNext: "완료 · 다음으로",
+    chooseBranchTitle: "다음 갈래 선택",
     prevStep: "이전으로",
     nextPending: "데크나무 이후 갈래가 이어집니다.",
     hintLevels: {

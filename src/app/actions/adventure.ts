@@ -1,84 +1,78 @@
 "use server";
 
-import { isCardId } from "@/data/cards";
 import { validateAdventureId, type AdventureIdErrorCode } from "@/lib/adventure-id";
-import { sanitizeProgress, type AdventureProgress } from "@/lib/adventure-progress";
-import { ADVENTURES_TABLE, createSupabaseClient, type AdventureRow } from "@/lib/supabase";
+import {
+  applyGoBack,
+  applyRevealHint,
+  applySelectNext,
+  buildAdventureView,
+  type AdventureView,
+} from "@/server/adventure-engine";
+import { readAdventureState, writeAdventureState } from "@/server/adventure-store";
 
-export type LoginActionResult =
-  | {
-      ok: true;
-      adventureId: string;
-      synced: boolean;
-      record?: AdventureRow;
-    }
-  | {
-      ok: false;
-      code: AdventureIdErrorCode;
-    };
+export type AdventureActionResult =
+  | { ok: true; adventureId: string; view: AdventureView }
+  | { ok: false; code: AdventureIdErrorCode };
 
-export async function loginWithAdventureId(rawId: string): Promise<LoginActionResult> {
+export async function loadAdventureAction(rawId: string): Promise<AdventureActionResult> {
   const checked = validateAdventureId(rawId);
-  if (!checked.ok) {
-    return { ok: false, code: checked.code };
-  }
+  if (!checked.ok) return { ok: false, code: checked.code };
 
-  const supabase = createSupabaseClient();
-  if (!supabase) {
-    return { ok: true, adventureId: checked.value, synced: false };
-  }
-
-  const { data: existing, error: selectError } = await supabase
-    .from(ADVENTURES_TABLE)
-    .select("adventure_id, current_card_id, selected_history, revealed_hints, updated_at")
-    .eq("adventure_id", checked.value)
-    .maybeSingle<AdventureRow>();
-
-  if (selectError) {
-    return { ok: true, adventureId: checked.value, synced: false };
-  }
-
-  if (existing) {
-    return { ok: true, adventureId: checked.value, synced: true, record: existing };
-  }
-
-  const { data: created, error: insertError } = await supabase
-    .from(ADVENTURES_TABLE)
-    .insert({
-      adventure_id: checked.value,
-      current_card_id: "kokiri-gear",
-      selected_history: [],
-      revealed_hints: [],
-      updated_at: new Date().toISOString(),
-    })
-    .select("adventure_id, current_card_id, selected_history, revealed_hints, updated_at")
-    .single<AdventureRow>();
-
-  if (insertError) {
-    return { ok: true, adventureId: checked.value, synced: false };
-  }
-
-  return { ok: true, adventureId: checked.value, synced: true, record: created };
+  const state = await readAdventureState(checked.value);
+  return {
+    ok: true,
+    adventureId: checked.value,
+    view: buildAdventureView(state),
+  };
 }
 
-export async function saveAdventureProgress(
+export async function selectNextCardAction(
   rawId: string,
-  rawProgress: AdventureProgress,
-): Promise<{ synced: boolean }> {
+  nextCardId: string,
+): Promise<AdventureActionResult> {
   const checked = validateAdventureId(rawId);
-  if (!checked.ok) return { synced: false };
+  if (!checked.ok) return { ok: false, code: checked.code };
 
-  const supabase = createSupabaseClient();
-  if (!supabase) return { synced: false };
+  const current = await readAdventureState(checked.value);
+  const next = applySelectNext(current, nextCardId);
+  await writeAdventureState(checked.value, next);
 
-  const progress = sanitizeProgress(rawProgress);
-  const { error } = await supabase.from(ADVENTURES_TABLE).upsert({
-    adventure_id: checked.value,
-    current_card_id: isCardId(progress.currentCardId) ? progress.currentCardId : "kokiri-gear",
-    selected_history: progress.selectedHistory,
-    revealed_hints: progress.revealedHints,
-    updated_at: new Date().toISOString(),
-  });
+  return {
+    ok: true,
+    adventureId: checked.value,
+    view: buildAdventureView(next),
+  };
+}
 
-  return { synced: !error };
+export async function goBackCardAction(rawId: string): Promise<AdventureActionResult> {
+  const checked = validateAdventureId(rawId);
+  if (!checked.ok) return { ok: false, code: checked.code };
+
+  const current = await readAdventureState(checked.value);
+  const next = applyGoBack(current);
+  await writeAdventureState(checked.value, next);
+
+  return {
+    ok: true,
+    adventureId: checked.value,
+    view: buildAdventureView(next),
+  };
+}
+
+export async function revealHintAction(
+  rawId: string,
+  mode: "next" | "all",
+): Promise<AdventureActionResult> {
+  const checked = validateAdventureId(rawId);
+  if (!checked.ok) return { ok: false, code: checked.code };
+
+  const current = await readAdventureState(checked.value);
+  const next = applyRevealHint(current, mode);
+  await writeAdventureState(checked.value, next);
+
+  return {
+    ok: true,
+    adventureId: checked.value,
+    view: buildAdventureView(next),
+  };
 }
