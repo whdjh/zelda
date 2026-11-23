@@ -1,8 +1,13 @@
 import { getMessages } from "../i18n/index.ts";
-
-export type GameId = "oot";
-export type OotCardId = "kokiri-gear" | "deku-tree";
-export type OotHintId = "kokiri-gear-1" | "kokiri-gear-2" | "kokiri-gear-3";
+import type {
+  AdventureView,
+  ChoiceCardView,
+  GameId,
+  HintRevealMode,
+  OotCardId,
+  OotHintId,
+  RevealedHintView,
+} from "../api/types.ts";
 
 export interface ServerCardDefinition {
   id: OotCardId;
@@ -17,41 +22,6 @@ export interface AdventureState {
   currentCardId: OotCardId;
   selectedHistory: OotCardId[];
   revealedHints: string[];
-}
-
-export interface RevealedHintView {
-  id: string;
-  level: 1 | 2 | 3;
-  label: string;
-  text: string;
-  isSolution: boolean;
-}
-
-export interface ChoiceCardView {
-  id: OotCardId;
-  badge: string;
-  icon: string;
-  title: string;
-  description: string;
-}
-
-export interface AdventureView {
-  gameId: GameId;
-  card: {
-    id: OotCardId;
-    stepLabel: string;
-    icon: string;
-    title: string;
-    steps: readonly string[];
-    referenceUrl: string;
-    hintQuestion: string;
-    totalHints: number;
-    revealedHints: RevealedHintView[];
-    hasMoreHints: boolean;
-    nextHintLevel: 1 | 2 | 3 | null;
-  };
-  nextChoices: ChoiceCardView[];
-  canGoBack: boolean;
 }
 
 export const INITIAL_OOT_CARD_ID: OotCardId = "kokiri-gear";
@@ -125,7 +95,7 @@ export function applyGoBack(state: AdventureState): AdventureState {
   };
 }
 
-export function applyRevealHint(state: AdventureState, mode: "next" | "all"): AdventureState {
+export function applyRevealHint(state: AdventureState, mode: HintRevealMode): AdventureState {
   const current = OOT_CARDS[state.currentCardId];
   if (!current.hintIds.length) return state;
   if (mode === "all") {

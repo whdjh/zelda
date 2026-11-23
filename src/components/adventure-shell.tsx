@@ -1,13 +1,16 @@
 "use client";
 
 import { ActionButton, BottomSheet, Portal } from "@seed-design/react";
-import { useEffect, useState, useSyncExternalStore, useTransition } from "react";
+import { useState, useSyncExternalStore } from "react";
 import {
-  goBackCardAction,
-  loadAdventureAction,
-  revealHintAction,
-  selectNextCardAction,
-} from "@/app/actions/adventure";
+  useAdventureQuery,
+  useGoBackCardMutation,
+  useLoginAdventureMutation,
+  useRevealHintMutation,
+  useSelectNextCardMutation,
+} from "@/api/adventure";
+import { ApiError } from "@/api/client";
+import type { ApiErrorCode } from "@/api/types";
 import { getMessages } from "@/i18n";
 import {
   ADVENTURE_ID_STORAGE_KEY,
@@ -15,9 +18,7 @@ import {
   readStoredAdventure,
   saveStoredAdventure,
   validateAdventureId,
-  type AdventureIdErrorCode,
 } from "@/lib/adventure-id";
-import type { AdventureView } from "@/server/adventure-engine";
 
 const LOCAL_EVENT = "zelda-highpass:adventure-id-change";
 
@@ -49,25 +50,28 @@ export function AdventureShell() {
     getServerAdventureId,
   );
   const [input, setInput] = useState("");
-  const [errorCode, setErrorCode] = useState<AdventureIdErrorCode | null>(null);
-  const [view, setView] = useState<AdventureView | null>(null);
-  const [loadedId, setLoadedId] = useState<string | null>(null);
+  const [errorCode, setErrorCode] = useState<ApiErrorCode | null>(null);
   const [hintOpen, setHintOpen] = useState(false);
   const [accountSheetOpen, setAccountSheetOpen] = useState(false);
-  const [isPending, startTransition] = useTransition();
 
-  useEffect(() => {
-    if (!adventureId || loadedId === adventureId) return;
-    let active = true;
-    void loadAdventureAction(adventureId).then((result) => {
-      if (!active || !result.ok) return;
-      setView(result.view);
-      setLoadedId(result.adventureId);
-    });
-    return () => {
-      active = false;
-    };
-  }, [adventureId, loadedId]);
+  const adventureQuery = useAdventureQuery(adventureId);
+  const loginMutation = useLoginAdventureMutation();
+  const selectNextMutation = useSelectNextCardMutation(adventureId);
+  const goBackMutation = useGoBackCardMutation(adventureId);
+  const revealHintMutation = useRevealHintMutation(adventureId);
+
+  const isMutating =
+    loginMutation.isPending ||
+    selectNextMutation.isPending ||
+    goBackMutation.isPending ||
+    revealHintMutation.isPending;
+
+  function resolveErrorMessage(code: ApiErrorCode): string {
+    if (code in t.login.validation) {
+      return t.login.validation[code as keyof typeof t.login.validation];
+    }
+    return t.error.title;
+  }
 
   function handleLoginSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -78,62 +82,40 @@ export function AdventureShell() {
       return;
     }
 
-    startTransition(async () => {
-      const result = await loadAdventureAction(checked.value);
-      if (!result.ok) {
-        setErrorCode(result.code);
-        return;
-      }
-      saveStoredAdventure(result.adventureId);
-      setView(result.view);
-      setLoadedId(result.adventureId);
-      setHintOpen(false);
-      setInput("");
-      window.dispatchEvent(new Event(LOCAL_EVENT));
+    loginMutation.mutate(checked.value, {
+      onSuccess: (payload) => {
+        saveStoredAdventure(payload.adventureId);
+        setHintOpen(false);
+        setInput("");
+        window.dispatchEvent(new Event(LOCAL_EVENT));
+      },
+      onError: (err) => {
+        setErrorCode(err instanceof ApiError ? err.code : "network_error");
+      },
     });
   }
 
   function handleSwitchId() {
     clearStoredAdventure();
     setAccountSheetOpen(false);
-    setView(null);
-    setLoadedId(null);
     setHintOpen(false);
     setErrorCode(null);
     window.dispatchEvent(new Event(LOCAL_EVENT));
   }
 
   function handleSelectNext(nextCardId: string) {
-    if (!adventureId) return;
-    startTransition(async () => {
-      const result = await selectNextCardAction(adventureId, nextCardId);
-      if (result.ok) {
-        setView(result.view);
-        setHintOpen(false);
-      }
+    selectNextMutation.mutate(nextCardId, {
+      onSuccess: () => setHintOpen(false),
     });
   }
 
   function handleGoBack() {
-    if (!adventureId) return;
-    startTransition(async () => {
-      const result = await goBackCardAction(adventureId);
-      if (result.ok) {
-        setView(result.view);
-        setHintOpen(false);
-      }
+    goBackMutation.mutate(undefined, {
+      onSuccess: () => setHintOpen(false),
     });
   }
 
-  function handleRevealHint(mode: "next" | "all") {
-    if (!adventureId) return;
-    startTransition(async () => {
-      const result = await revealHintAction(adventureId, mode);
-      if (result.ok) setView(result.view);
-    });
-  }
-
-  if (adventureId === undefined || (adventureId && (!view || loadedId !== adventureId))) {
+  if (adventureId === undefined || (adventureId && adventureQuery.isPending)) {
     return (
       <section className="rounded-r4 border border-stroke-neutral-muted bg-bg-layer-default p-x6">
         <p role="status" className="t3-regular text-fg-neutral-muted">{t.login.loading}</p>
@@ -175,7 +157,7 @@ export function AdventureShell() {
           />
           {errorCode && (
             <p role="alert" className="t3-regular text-fg-critical">
-              {t.login.validation[errorCode]}
+              {resolveErrorMessage(errorCode)}
             </p>
           )}
           <div className="mt-x2">
@@ -183,10 +165,10 @@ export function AdventureShell() {
               type="submit"
               variant="brandSolid"
               size="large"
-              disabled={isPending}
+              disabled={loginMutation.isPending}
               className="w-full"
             >
-              {isPending ? t.login.submitting : t.login.submit}
+              {loginMutation.isPending ? t.login.submitting : t.login.submit}
             </ActionButton>
           </div>
         </form>
@@ -194,9 +176,18 @@ export function AdventureShell() {
     );
   }
 
-  if (!view) return null;
+  if (adventureQuery.isError || !adventureQuery.data) {
+    return (
+      <section className="rounded-r4 border border-stroke-neutral-muted bg-bg-layer-default p-x6">
+        <p className="mb-x4 t4-bold text-fg-neutral">{t.error.title}</p>
+        <ActionButton variant="brandSolid" size="medium" onClick={() => adventureQuery.refetch()}>
+          {t.error.retry}
+        </ActionButton>
+      </section>
+    );
+  }
 
-  const { card, nextChoices, canGoBack } = view;
+  const { card, nextChoices, canGoBack } = adventureQuery.data.view;
   const singleNext = nextChoices.length === 1 ? nextChoices[0] : undefined;
 
   return (
@@ -224,7 +215,7 @@ export function AdventureShell() {
           {canGoBack && (
             <button
               type="button"
-              disabled={isPending}
+              disabled={isMutating}
               onClick={handleGoBack}
               className="t2-regular text-fg-neutral-subtle underline"
             >
@@ -306,8 +297,8 @@ export function AdventureShell() {
                 <ActionButton
                   variant="brandSolid"
                   size="small"
-                  disabled={isPending}
-                  onClick={() => handleRevealHint("next")}
+                  disabled={isMutating}
+                  onClick={() => revealHintMutation.mutate("next")}
                 >
                   {card.nextHintLevel === 1
                     ? t.guide.nextHint1
@@ -319,8 +310,8 @@ export function AdventureShell() {
                   <ActionButton
                     variant="neutralWeak"
                     size="small"
-                    disabled={isPending}
-                    onClick={() => handleRevealHint("all")}
+                    disabled={isMutating}
+                    onClick={() => revealHintMutation.mutate("all")}
                   >
                     {t.guide.solveNow}
                   </ActionButton>
@@ -337,7 +328,7 @@ export function AdventureShell() {
               <button
                 key={choice.id}
                 type="button"
-                disabled={isPending}
+                disabled={isMutating}
                 onClick={() => handleSelectNext(choice.id)}
                 className="flex items-center gap-x3 rounded-r3 border border-stroke-neutral-muted bg-bg-layer-default p-x3 text-left"
               >
@@ -372,7 +363,7 @@ export function AdventureShell() {
                 variant="brandSolid"
                 size="large"
                 className="flex-1"
-                disabled={isPending}
+                disabled={isMutating}
                 onClick={() => handleSelectNext(singleNext.id)}
               >
                 {t.guide.completeNext}

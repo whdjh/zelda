@@ -1,9 +1,13 @@
-# Supabase 연동 & 백엔드 주도 아키텍처
+# Supabase 연동 & 백엔드 API 아키텍처
 
 ## 1. 역할 분리 (야숨·왕눈 확장 대비)
 
-- **백엔드 (`src/server/`, `src/app/actions/adventure.ts`)**: 게임별 카드 그래프·셔플·3단계 힌트 원본과 유저 진행도(`zhp_adventures`)를 모두 관리하고, **현재 화면에 필요한 카드와 공개된 힌트만** 프론트에 내려줍니다.
-- **프론트엔드 (`src/components/adventure-shell.tsx`)**: `localStorage`에 자유 아이디(`adventureId`)만 유지하며, 서버가 내려준 뷰 모델만 SEED UI로 렌더링합니다.
+- **백엔드 API (`src/app/api/adventure/*`, `src/server/`)**: 게임별 카드 그래프·셔플·3단계 힌트 원본과 유저 진행도(`zhp_adventures`)를 관리하고, **현재 화면에 필요한 카드와 공개된 힌트만** JSON으로 내려줍니다.
+- **중앙 API 계층 (`src/api/`)**:
+  - `src/api/types.ts`: 요청·응답·에러 코드·뷰모델 타입 단일 정의
+  - `src/api/client.ts`: 공통 `apiRequest` 래퍼 및 `ApiError` 처리
+  - `src/api/adventure.ts`: `adventureKeys` + TanStack Query 훅(`useAdventureQuery`, `useSelectNextCardMutation`, `useGoBackCardMutation`, `useRevealHintMutation`)
+- **프론트엔드 (`src/components/adventure-shell.tsx`)**: `localStorage`에 자유 아이디(`adventureId`)만 유지하고, 중앙 훅이 내려준 뷰 모델만 SEED UI로 렌더링합니다.
 
 ## 2. 로그인 방식
 

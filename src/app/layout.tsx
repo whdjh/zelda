@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { QueryProvider } from "@/components/query-provider";
 import { getMessages } from "@/i18n";
 import "./globals.css";
 
@@ -22,7 +23,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="ko" data-seed data-seed-color-mode="light-only">
       <body>
         <a className="skip-link bg-bg-layer-default text-fg-informative-contrast" href="#main">{t.app.skipToMain}</a>
-        {children}
+        <QueryProvider>{children}</QueryProvider>
       </body>
     </html>
   );
