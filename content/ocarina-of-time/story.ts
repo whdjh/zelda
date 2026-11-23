@@ -138,7 +138,7 @@ export const story: Chapter[] = [
     summary: ["남은 유령을 찾아 중앙 홀 아래로 내려가요."],
     walkthrough: [
       "눈 스위치로 복도의 뒤틀림을 바꾸며 보스 열쇠를 찾으세요. 각 유령 방의 그림과 발판을 해결하고 중앙 홀의 마지막 분신을 구별합니다.",
-      "네 불꽃이 돌아오면 승강기로 내려가세요. 회전 벽을 움직이고 불과 얼어붙은 눈이 맞는 위치에서 불을 통과한 화살을 두 번 맞힙니다.",
+      "네 불꽃이 돌아오면 승강기로 내려가세요. 벽을 반시계 방향으로 한 번 밀고 열린 방의 바닥 스위치로 불을 켭니다. 다시 반시계 방향으로 세 번 밀어 횃불과 얼어붙은 표적을 맞춘 뒤 불을 통과한 화살을 두 번 쏘세요.",
       "팬텀 가논이 그림에서 나올 때 진짜를 활로 쏘세요. 공중전에서는 날아오는 광탄을 검으로 되받고 내려오면 공격합니다. 직접 돌진할 때는 옆으로 피하세요.",
       "신전 뒤 시간의 신전에서 시크를 만나 귀환곡과 시대를 오가는 방법을 확인하세요. 이후 필요한 구간에서 검을 꽂거나 뽑아 시대를 바꿉니다.",
     ], sourceIds: ["gw-forest", "gw-phantom", "gw-well"],
@@ -175,7 +175,7 @@ export const story: Chapter[] = [
     ], sourceIds: ["gw-ice"],
   },
   {
-    id: "water-levels", title: "물의 신전 수위 알아보기", requiredAge: "adult", prerequisiteItemIds: ["iron-boots-tunic", "hookshot", "bow"],
+    id: "water-levels", title: "물의 신전 수위 알아보기", requiredAge: "adult", prerequisiteItemIds: ["iron-boots-tunic", "hookshot", "bow", "royal-letter-lullaby", "bomb-bag"],
     summary: ["하일리아 호수 바닥으로 들어가 수위와 통로의 관계를 살펴봐요."],
     walkthrough: [
       "얼음 동굴에서 배운 물의 세레나데로 하일리아 호수에 이동하세요. 헤비 부츠로 가라앉아 입구 스위치를 훅샷으로 여세요. 동쪽 아래에서 루토를 만나 부츠를 벗고 위로 뜹니다.",
@@ -185,18 +185,19 @@ export const story: Chapter[] = [
     ], sourceIds: ["gw-water"],
   },
   {
-    id: "water-guardian", title: "물길 너머 긴 도구", requiredAge: "adult", prerequisiteItemIds: ["iron-boots-tunic", "bow"],
+    id: "water-guardian", title: "물길 너머 긴 도구", requiredAge: "adult", prerequisiteItemIds: ["iron-boots-tunic", "bow", "royal-letter-lullaby", "bomb-bag", "hammer"],
     summary: ["안쪽 도구를 얻고 잠긴 마지막 통로로 돌아가요."],
     walkthrough: [
       "다크 링크는 정면 연타를 따라 하므로 도약 공격과 회피 뒤 반격으로 빈틈을 만드세요. 승리 뒤 롱샷을 얻습니다.",
-      "시간의 블록 너머 강에서는 소용돌이를 피하세요. 눈 스위치를 활로 누르고 열린 시간 안에 롱샷으로 건넙니다.",
-      "수위를 낮음·중간·높음으로 바꾸며 남은 열쇠와 보스 열쇠 통로를 확인하세요. 멀리 있는 표적과 블록 뒤 통로는 롱샷으로 연결합니다.",
+      "롱샷을 얻은 방의 북쪽 표적을 잡아 위층으로 올라간 뒤 중앙 구멍으로 물길에 내려가세요. 헤비 부츠로 물속을 걸으며 소용돌이를 피합니다. 눈 스위치를 활로 누르고 열린 시간 안에 롱샷으로 건넙니다.",
+      "중앙 방에서 중간 수위로 바꾸고 대광장 북쪽 눈 스위치를 활로 눌러 롱샷으로 건너세요. 수중 블록을 당기고 천장 표적을 거쳐 다음 블록을 밀면 작은 열쇠로 가는 길이 열립니다.",
+      "대광장 서쪽 길로 3층에 올라 자장가로 수위를 높이세요. 허수아비 노래는 없어도 됩니다. 1층 북쪽 물속 통로와 잠긴 문을 지나 해머로 벽을 부수고 블록을 물에 밀어 넣습니다. 스위치 발판을 건너 폭포 뒤 왼쪽 방에서 보스 열쇠를 챙깁니다.",
       "마지막 비탈에서는 헤비 부츠를 신고 올라가세요. 모파 방에서는 가장자리에서 기다렸다가 다가오는 핵을 롱샷으로 끌어내 검으로 공격합니다.",
       "핵을 벽에 가둬 계속 때리는 구판 전법은 적용하지 마세요. 전투 뒤 호수의 태양을 향해 화살을 쏘아 불의 화살을 챙깁니다.",
     ], sourceIds: ["gw-water", "gw-morpha"],
   },
   {
-    id: "well-lens", title: "어린 시절의 우물", requiredAge: "child", prerequisiteItemIds: ["storm-song"],
+    id: "well-lens", title: "어린 시절의 우물", requiredAge: "child", prerequisiteItemIds: ["storm-song", "royal-letter-lullaby"],
     summary: ["시간의 신전에서 소년으로 돌아와 카카리코 우물을 조사해요."],
     walkthrough: [
       "마스터 소드를 꽂아 소년으로 돌아가세요. 카카리코 풍차 안에서 폭풍의 노래를 연주하면 우물물이 빠집니다.",
@@ -206,7 +207,7 @@ export const story: Chapter[] = [
     ], sourceIds: ["gw-well"],
   },
   {
-    id: "shadow-boots", title: "묘지 위에서 어둠 속으로", requiredAge: "adult", prerequisiteItemIds: ["lens", "din-fire"],
+    id: "shadow-boots", title: "묘지 위에서 어둠 속으로", requiredAge: "adult", prerequisiteItemIds: ["lens", "din-fire", "hookshot"],
     summary: ["청년으로 돌아와 카카리코의 사건을 확인하고 신전에 들어가요."],
     walkthrough: [
       "검을 뽑아 청년으로 돌아오세요. 카카리코의 사건 뒤 어둠의 녹턴을 배우고 묘지 위 입구로 이동합니다.",
@@ -216,10 +217,10 @@ export const story: Chapter[] = [
     ], sourceIds: ["gw-shadow"],
   },
   {
-    id: "shadow-guardian", title: "보이지 않는 길과 배", requiredAge: "adult", prerequisiteItemIds: ["lens", "hover-boots", "bow", "hammer"],
+    id: "shadow-guardian", title: "보이지 않는 길과 배", requiredAge: "adult", prerequisiteItemIds: ["lens", "hover-boots", "bow", "hammer", "hookshot", "iron-boots-tunic", "royal-letter-lullaby", "din-fire", "bomb-bag"],
     summary: ["바람과 숨은 발판을 지나 마지막 방으로 가요."],
     walkthrough: [
-      "렌즈로 보이는 훅샷 표적과 발판을 확인하세요. 강한 바람은 헤비 부츠로 버티고 옆쪽 선풍기와 숨은 통로를 살펴봅니다.",
+      "렌즈로 보이는 훅샷 표적과 발판을 확인하세요. 강한 바람은 헤비 부츠로 버티고 옆쪽 선풍기와 숨은 통로를 살펴봅니다. 숨은 방 오른쪽 바위를 폭탄으로 없애고 렌즈로 작은 열쇠 상자를 찾으세요.",
       "배 위 왕가 문양에서 자장가를 연주하세요. 도착하면 배가 가라앉기 전에 내립니다.",
       "가시 벽은 딘의 불꽃으로 처리해 보스 열쇠를 찾으세요. 이 판본에서는 새 석상 밑부분을 해머로 쳐 다리를 만듭니다.",
       "렌즈와 호버 부츠로 마지막 빈틈을 건너세요. 봉고봉고는 손의 보라색 보호가 풀린 때 양손을 각각 활로 멈추세요. 렌즈로 본 몸통의 눈을 활로 맞히고 검으로 공격합니다.",
@@ -245,17 +246,17 @@ export const story: Chapter[] = [
     ], sourceIds: ["gw-gerudo"],
   },
   {
-    id: "spirit-child", title: "작은 몸으로 지나갈 통로", requiredAge: "child", prerequisiteItemIds: ["spirit-song", "boomerang"],
+    id: "spirit-child", title: "작은 몸으로 지나갈 통로", requiredAge: "child", prerequisiteItemIds: ["spirit-song", "boomerang", "slingshot"],
     summary: ["소년으로 사막의 신전에 돌아가 안쪽 장비를 찾아요."],
     walkthrough: [
       "시간의 신전에서 소년으로 바꾸고 혼의 레퀴엠으로 돌아오세요. 나보루와 이야기한 뒤 낮은 통로로 들어갑니다.",
-      "철창 뒤 스위치는 부메랑을 돌아가게 던져 누르세요. 아누비스는 불로 처리하고 은 루피와 횃불로 길을 엽니다.",
-      "벽을 올라 금 간 벽을 폭탄쥐로 여세요. 빛이 드는 방에서는 태양 문양 블록을 햇빛 속으로 옮깁니다.",
+      "철창 뒤 스위치는 부메랑으로 누르세요. 아누비스를 불기둥 위치로 유인하고 새총으로 눈 스위치를 쏘세요. 은 루피를 모으고 막대로 횃불을 켜 작은 열쇠를 얻습니다.",
+      "벽을 오른 방의 적을 정리하고 위쪽 스위치를 부메랑으로 누르세요. 나타난 상자에서 폭탄쥐를 얻어 금 간 벽에 보냅니다. 빛이 드는 방에서는 태양 문양 블록을 햇빛 속으로 옮깁니다.",
       "아이언 너클의 도끼를 방패로 버티려 하지 마세요. 헛치게 유도한 뒤 짧게 반격하고, 승리 후 바깥 상자에서 은 건틀릿을 얻습니다.",
     ], sourceIds: ["gw-spirit"],
   },
   {
-    id: "spirit-adult", title: "빛을 다루는 방패", requiredAge: "adult", prerequisiteItemIds: ["silver-gauntlets", "spirit-song"],
+    id: "spirit-adult", title: "빛을 다루는 방패", requiredAge: "adult", prerequisiteItemIds: ["silver-gauntlets", "spirit-song", "hookshot", "royal-letter-lullaby"],
     summary: ["청년으로 돌아와 큰 블록 너머 신전을 진행해요."],
     walkthrough: [
       "청년으로 바꾸고 혼의 레퀴엠으로 돌아오세요. 입구의 큰 블록을 밀고 안쪽으로 갑니다.",
@@ -271,20 +272,21 @@ export const story: Chapter[] = [
       "트윈로바가 나뉘어 있을 때는 한쪽 마법을 미러 실드로 받아 반대 속성 쪽으로 돌려보내세요.",
       "합체 뒤에는 같은 속성 세 번을 방패에 모으세요. 다른 속성을 받으면 모은 힘이 사라지므로 피합니다.",
       "모인 빛을 적에게 돌려보내 쓰러뜨리고 건너가 검으로 공격하세요. 마법이 섞이면 공격을 서두르기보다 다시 같은 속성을 기다립니다.",
-      "신전의 대화를 마치고 시간의 신전으로 돌아가 사건을 확인하세요. 빛의 화살을 받은 뒤 최종 성으로 갑니다.",
+      "어둠과 혼의 신전을 모두 마친 뒤 시간의 신전에서 사건을 보고 빛의 화살을 받으세요. 혼을 먼저 끝냈다면 남은 어둠 구간을 마친 뒤 돌아옵니다.",
     ], sourceIds: ["gw-twinrova", "gw-spirit"],
   },
   {
-    id: "castle-barriers", title: "성의 여섯 결계", requiredAge: "adult", prerequisiteItemIds: ["light-arrows", "fire-arrows", "mirror-shield", "bottle", "lens", "hammer", "hover-boots"],
+    id: "castle-barriers", title: "성의 여섯 결계", requiredAge: "adult", prerequisiteItemIds: ["light-arrows", "fire-arrows", "mirror-shield", "bottle", "lens", "hammer", "hover-boots", "longshot", "royal-letter-lullaby", "din-fire", "bomb-bag", "bow"],
     summary: ["여섯 방의 결계를 해제해 중앙 탑을 열어요."],
     walkthrough: [
-      "어둠 방부터 진행해 금 건틀릿을 챙기세요. 불의 화살로 길을 밝히고 렌즈로 숨은 길을 확인합니다. 각 방 끝의 검은 구체는 빛의 화살로 해제합니다.",
+      "성에 가기 전 시간의 신전 사건에서 빛의 화살을 받았는지 확인하세요. 폭탄·폭탄쥐·화살·마력을 보충합니다. 성에서는 어둠 방부터 진행해 금 건틀릿을 챙기세요. 불의 화살로 길을 밝히고 렌즈로 숨은 길을 확인합니다. 각 방 끝의 검은 구체는 빛의 화살로 해제합니다.",
+      "폭탄쥐가 없다면 소년 시대 밤의 성 아랫마을 폭탄쥐 상점이나 환영의 사막 양탄자 상인에게 보충한 뒤 청년으로 성에 돌아오세요. 혼 방에서 사용할 수량을 남겨 둡니다.",
       "불 방은 금 건틀릿으로 큰 기둥을 옮기며 은 루피를 모으세요. 빛 방은 열쇠와 자장가 문을 지나 가짜 벽 뒤를 확인합니다.",
       "혼 방은 석상으로 칼날을 막고 천장 표적을 이용해 루피를 모으세요. 철창 위로 폭탄쥐를 보내 스위치를 누릅니다.",
       "혼 방 천장 거미줄은 불의 화살로 태우세요. 들어온 빛을 미러 실드로 진짜 태양 문양에 반사합니다.",
       "숲 방 횃불은 딘의 불꽃과 불의 화살로 켜세요. 시간의 블록·호버 부츠·바닥 스위치로 은 루피를 모읍니다.",
       "물 방은 푸른 불을 병에 담아 붉은 얼음을 녹이세요. 불을 재충전하고 얼음 블록을 옮겨 안쪽 스위치를 해머로 누릅니다. 여섯 결계가 모두 풀리면 중앙 탑으로 갑니다.",
-    ], sourceIds: ["gw-ganon-castle"],
+    ], sourceIds: ["gw-ganon-castle", "gw-bombchu"],
   },
   {
     id: "tower-escape", title: "탑의 결투와 탈출", requiredAge: "adult", prerequisiteItemIds: ["light-arrows", "longshot"],

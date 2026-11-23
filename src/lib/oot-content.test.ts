@@ -33,6 +33,55 @@ test("실제 노선을 끝까지 진행하되 장비와 시대는 명시적 확�
   assert.deepEqual(parseProgress(JSON.stringify(progress), ootContent), progress);
 });
 
+test("빈 기록에서 안내된 획득물만 확인하며 추천 경로로 엔딩에 도달한다", () => {
+  const progress = createProgress(ootContent);
+  progress.age = "child";
+  for (let step = 0; step < ootContent.stops.length; step++) {
+    const route = selectRoute(ootContent.stops, progress);
+    const stop = ootContent.stops.find((entry) => entry.id === route.currentId);
+    assert.ok(stop, `엔딩 전 추천 중단: ${progress.completedStopIds.join(", ")}`);
+    if (stop.requiredAge && stop.requiredAge !== progress.age) {
+      assert.ok(progress.completedStopIds.includes("forest-guardian"), "시대 복귀는 숲 완료 이후");
+      progress.age = stop.requiredAge;
+    }
+    const prepared = selectRoute(ootContent.stops, progress);
+    assert.deepEqual(prepared.requirements[stop.id].items, [], `${stop.id}: 안내 이전에 필요한 장비`);
+    assert.ok(prepared.availableIds.includes(stop.id), stop.id);
+    progress.completedStopIds.push(stop.id);
+    // 실제 앱은 자동 지급하지 않는다. 이 시나리오에서만 사용자의 획득 확인을 재현한다.
+    for (const item of stop.rewardItemIds ?? []) {
+      assert.ok(item !== "light-arrows" || progress.completedStopIds.includes("shadow-guardian"));
+      if (!progress.confirmedItemIds.includes(item)) progress.confirmedItemIds.push(item);
+    }
+    if (stop.id === "time-door") progress.age = "adult";
+    if (stop.id === "final-battle") break;
+  }
+  assert.ok(progress.completedStopIds.includes("final-battle"));
+  assert.equal(selectRoute(ootContent.stops, progress).currentId, null);
+});
+
+test("기록한 필수 장비를 취소하면 완료 이력이 있어도 준비된 구간으로 추천하지 않는다", () => {
+  const checks: [string, string][] = [
+    ["water-levels", "royal-letter-lullaby"], ["water-guardian", "bomb-bag"],
+    ["water-guardian", "hammer"], ["shadow-guardian", "bomb-bag"],
+    ["well-lens", "royal-letter-lullaby"], ["shadow-boots", "hookshot"],
+    ["shadow-guardian", "iron-boots-tunic"], ["shadow-guardian", "din-fire"],
+    ["spirit-child", "slingshot"], ["spirit-adult", "hookshot"],
+    ["castle-barriers", "longshot"], ["castle-barriers", "royal-letter-lullaby"],
+  ];
+  for (const [id, item] of checks) {
+    const stop = ootContent.stops.find((entry) => entry.id === id)!;
+    const progress = { ...createProgress(ootContent), age: stop.requiredAge,
+      completedStopIds: ootContent.stops.filter((entry) => entry.id !== id).map((entry) => entry.id),
+      confirmedItemIds: ootContent.items.filter((entry) => entry.id !== item).map((entry) => entry.id),
+      goalStopId: id,
+    };
+    const route = selectRoute(ootContent.stops, progress);
+    assert.ok(route.requirements[id].items.includes(item), `${id}: ${item}`);
+    assert.ok(!route.availableIds.includes(id), `${id}: ${item}`);
+  }
+});
+
 test("시대 필드가 없는 기존 백업은 미확인 상태로 읽고 잘못된 시대는 거절한다", () => {
   const old = createProgress(ootContent);
   delete old.age;
@@ -42,7 +91,7 @@ test("시대 필드가 없는 기존 백업은 미확인 상태로 읽고 잘못
 
 
 test("청년 시작에서 얼음·숲 준비가 병렬이며 활만 얻고 다른 신전으로 갈 수 있다", () => {
-  const progress = { ...createProgress(ootContent), completedStopIds: ["time-door"], age: "adult" as const, confirmedItemIds: ["bottle", "hookshot", "bow", "bomb-bag", "iron-boots-tunic"] };
+  const progress = { ...createProgress(ootContent), completedStopIds: ["time-door"], age: "adult" as const, confirmedItemIds: ["bottle", "hookshot", "bow", "bomb-bag", "iron-boots-tunic", "royal-letter-lullaby"] };
   const route = selectRoute(ootContent.stops, progress);
   for (const id of ["ice-equipment", "forest-bow", "fire-hammer", "water-levels"]) assert.ok(route.availableIds.includes(id), id);
   assert.ok(!route.neededIds.includes("ice-equipment"), "장비가 있으면 획득 경유를 제외한다");
@@ -57,7 +106,7 @@ test("목적지·장비·완료 취소가 남은 연결과 배치를 바꾼다",
   assert.ok(initial.neededIds.includes("ice-equipment"));
   assert.ok(initial.neededIds.includes("forest-bow"));
   assert.ok(!initial.neededIds.includes("fire-guardian"));
-  const equipped = selectRoute(ootContent.stops, { ...progress, confirmedItemIds: ["iron-boots-tunic", "hookshot", "bow"] });
+  const equipped = selectRoute(ootContent.stops, { ...progress, confirmedItemIds: ["iron-boots-tunic", "hookshot", "bow", "royal-letter-lullaby", "bomb-bag"] });
   assert.deepEqual(equipped.neededIds, ["water-levels"]);
   assert.notDeepEqual(initial.layers, equipped.layers);
   assert.deepEqual(selectRoute(ootContent.stops, { ...progress, completedStopIds: ["water-levels"] }).neededIds, []);
@@ -65,7 +114,7 @@ test("목적지·장비·완료 취소가 남은 연결과 배치를 바꾼다",
 });
 
 test("우물·사막 경로에 불필요한 앞 목차 완료를 요구하지 않는다", () => {
-  const progress = { ...createProgress(ootContent), age: "child" as const, completedStopIds: ["forest-guardian"], confirmedItemIds: ["storm-song"] };
+  const progress = { ...createProgress(ootContent), age: "child" as const, completedStopIds: ["forest-guardian"], confirmedItemIds: ["storm-song", "royal-letter-lullaby"] };
   assert.ok(selectRoute(ootContent.stops, progress).availableIds.includes("well-lens"));
   const desert = selectRoute(ootContent.stops, { ...progress, age: "adult", completedStopIds: ["gerudo-rescue"], confirmedItemIds: ["longshot", "lens"] });
   assert.ok(desert.availableIds.includes("desert-crossing"));
@@ -73,11 +122,11 @@ test("우물·사막 경로에 불필요한 앞 목차 완료를 요구하지 �
 });
 
 test("획득 경유를 완료해도 장비 확인을 생략하지 않으며 과거 기록을 자동 채우지 않는다", () => {
-  const progress = { ...createProgress(ootContent), completedStopIds: ["time-door", "ice-equipment"], goalStopId: "water-levels" };
+  const progress = { ...createProgress(ootContent), completedStopIds: ["time-door", "ice-equipment"], confirmedItemIds: ["royal-letter-lullaby", "bomb-bag"], goalStopId: "water-levels" };
   const route = selectRoute(ootContent.stops, progress);
   assert.ok(route.requirements["water-levels"].items.includes("iron-boots-tunic"));
   assert.ok(!route.neededIds.includes("forest-equipment"));
-  assert.deepEqual(progress.confirmedItemIds, []);
+  assert.deepEqual(progress.confirmedItemIds, ["royal-letter-lullaby", "bomb-bag"]);
   assert.deepEqual(progress.completedStopIds, ["time-door", "ice-equipment"]);
 });
 

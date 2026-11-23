@@ -20,7 +20,7 @@ export const routeRules: Record<string, { before: string[]; rewards: string[]; s
   "fire-guardian": { before: ["fire-hammer"], rewards: [], sources: ["gw-fire"], note: "해머 획득 이후 불의 신전을 마무리합니다." },
   "ice-equipment": { before: ["time-door"], rewards: ["iron-boots-tunic"], sources: ["gw-ice", "nl-ice"], note: "청년의 조라 지역에서 병으로 준비하는 경로입니다. 불의 신전 완료를 요구하는 조건은 자료에서 확인되지 않아 분리한 초안입니다." },
   "water-levels": { before: ["time-door"], rewards: [], sources: ["gw-water", "nl-water"], note: "수중 장비·훅샷·활을 준비하면 물 방면을 검토할 수 있습니다. 불 보스 완료와 분리한 초안입니다." },
-  "water-guardian": { before: ["water-levels"], rewards: ["longshot", "fire-arrows"], sources: ["gw-water"], note: "롱샷 획득과 보스 완료, 이후 불의 화살 획득은 각각 직접 기록하세요." },
+  "water-guardian": { before: ["water-levels"], rewards: ["longshot", "fire-arrows"], sources: ["gw-water"], note: "이 안내의 보스 열쇠 경로는 해머를 사용합니다. 롱샷 획득과 보스 완료, 이후 불의 화살 획득은 각각 직접 기록하세요." },
   "well-lens": { before: ["forest-guardian"], rewards: ["lens"], sources: ["gw-well", "fb-songs"], note: "소년으로 돌아가는 조건과 폭풍의 노래가 필요합니다. 물의 신전 완료는 우물의 선행 조건으로 사용하지 않습니다." },
   "shadow-boots": { before: ["forest-guardian", "fire-guardian", "water-guardian"], rewards: ["hover-boots"], sources: ["gw-shadow", "fb-songs"], note: "세 신전 뒤 카카리코 사건과 입장곡을 확인하세요. 렌즈·마법 준비가 별도로 필요합니다." },
   "shadow-guardian": { before: ["shadow-boots"], rewards: [], sources: ["gw-shadow"], note: "현재 판본의 상세 공략은 해머를 사용하는 구간을 포함합니다." },
