@@ -1,6 +1,8 @@
 "use server";
 
+import { isCardId } from "@/data/cards";
 import { validateAdventureId, type AdventureIdErrorCode } from "@/lib/adventure-id";
+import { sanitizeProgress, type AdventureProgress } from "@/lib/adventure-progress";
 import { ADVENTURES_TABLE, createSupabaseClient, type AdventureRow } from "@/lib/supabase";
 
 export type LoginActionResult =
@@ -23,11 +25,7 @@ export async function loginWithAdventureId(rawId: string): Promise<LoginActionRe
 
   const supabase = createSupabaseClient();
   if (!supabase) {
-    return {
-      ok: true,
-      adventureId: checked.value,
-      synced: false,
-    };
+    return { ok: true, adventureId: checked.value, synced: false };
   }
 
   const { data: existing, error: selectError } = await supabase
@@ -48,7 +46,7 @@ export async function loginWithAdventureId(rawId: string): Promise<LoginActionRe
     .from(ADVENTURES_TABLE)
     .insert({
       adventure_id: checked.value,
-      current_card_id: null,
+      current_card_id: "kokiri-gear",
       selected_history: [],
       revealed_hints: [],
       updated_at: new Date().toISOString(),
@@ -61,4 +59,26 @@ export async function loginWithAdventureId(rawId: string): Promise<LoginActionRe
   }
 
   return { ok: true, adventureId: checked.value, synced: true, record: created };
+}
+
+export async function saveAdventureProgress(
+  rawId: string,
+  rawProgress: AdventureProgress,
+): Promise<{ synced: boolean }> {
+  const checked = validateAdventureId(rawId);
+  if (!checked.ok) return { synced: false };
+
+  const supabase = createSupabaseClient();
+  if (!supabase) return { synced: false };
+
+  const progress = sanitizeProgress(rawProgress);
+  const { error } = await supabase.from(ADVENTURES_TABLE).upsert({
+    adventure_id: checked.value,
+    current_card_id: isCardId(progress.currentCardId) ? progress.currentCardId : "kokiri-gear",
+    selected_history: progress.selectedHistory,
+    revealed_hints: progress.revealedHints,
+    updated_at: new Date().toISOString(),
+  });
+
+  return { synced: !error };
 }

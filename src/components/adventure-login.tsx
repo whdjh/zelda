@@ -2,7 +2,8 @@
 
 import { ActionButton } from "@seed-design/react";
 import { useEffect, useState, useSyncExternalStore, useTransition } from "react";
-import { loginWithAdventureId } from "@/app/actions/adventure";
+import { loginWithAdventureId, saveAdventureProgress } from "@/app/actions/adventure";
+import { AdventureCardFlow } from "@/components/adventure-card-flow";
 import { getMessages } from "@/i18n";
 import {
   ADVENTURE_ID_STORAGE_KEY,
@@ -12,6 +13,14 @@ import {
   validateAdventureId,
   type AdventureIdErrorCode,
 } from "@/lib/adventure-id";
+import {
+  createInitialProgress,
+  readStoredProgress,
+  sanitizeProgress,
+  saveStoredProgress,
+  type AdventureProgress,
+} from "@/lib/adventure-progress";
+import type { AdventureRow } from "@/lib/supabase";
 
 interface AdventureLoginProps {
   supabaseConfigured: boolean;
@@ -39,6 +48,14 @@ function getServerAdventureId(): undefined {
   return undefined;
 }
 
+function progressFromRecord(record: AdventureRow): AdventureProgress {
+  return sanitizeProgress({
+    currentCardId: record.current_card_id as AdventureProgress["currentCardId"],
+    selectedHistory: record.selected_history as AdventureProgress["selectedHistory"],
+    revealedHints: record.revealed_hints,
+  });
+}
+
 export function AdventureLogin({ supabaseConfigured }: AdventureLoginProps) {
   const t = getMessages();
   const adventureId = useSyncExternalStore(
@@ -49,14 +66,31 @@ export function AdventureLogin({ supabaseConfigured }: AdventureLoginProps) {
   const [input, setInput] = useState("");
   const [errorCode, setErrorCode] = useState<AdventureIdErrorCode | null>(null);
   const [syncedId, setSyncedId] = useState<string | null>(null);
+  const [progressOverride, setProgressOverride] = useState<{
+    id: string;
+    data: AdventureProgress;
+  } | null>(null);
   const [isPending, startTransition] = useTransition();
+
+  const progress = !adventureId
+    ? createInitialProgress()
+    : progressOverride?.id === adventureId
+      ? progressOverride.data
+      : readStoredProgress(adventureId);
 
   useEffect(() => {
     if (!adventureId || !supabaseConfigured || syncedId === adventureId) return;
     let active = true;
     void loginWithAdventureId(adventureId).then((result) => {
       if (!active || !result.ok) return;
-      if (result.synced) setSyncedId(result.adventureId);
+      if (result.synced) {
+        setSyncedId(result.adventureId);
+        if (result.record) {
+          const remote = progressFromRecord(result.record);
+          saveStoredProgress(result.adventureId, remote);
+          setProgressOverride({ id: result.adventureId, data: remote });
+        }
+      }
     });
     return () => {
       active = false;
@@ -79,16 +113,31 @@ export function AdventureLogin({ supabaseConfigured }: AdventureLoginProps) {
         return;
       }
       saveStoredAdventure(result.adventureId);
+      if (result.record) {
+        const remote = progressFromRecord(result.record);
+        saveStoredProgress(result.adventureId, remote);
+        setProgressOverride({ id: result.adventureId, data: remote });
+      }
       window.dispatchEvent(new Event(LOCAL_EVENT));
       setSyncedId(result.synced ? result.adventureId : null);
       setInput("");
     });
   }
 
+  function handleUpdateProgress(next: AdventureProgress) {
+    if (!adventureId) return;
+    saveStoredProgress(adventureId, next);
+    setProgressOverride({ id: adventureId, data: next });
+    if (supabaseConfigured) {
+      void saveAdventureProgress(adventureId, next);
+    }
+  }
+
   function handleSwitchId() {
     clearStoredAdventure();
     window.dispatchEvent(new Event(LOCAL_EVENT));
     setSyncedId(null);
+    setProgressOverride(null);
     setErrorCode(null);
   }
 
@@ -154,14 +203,14 @@ export function AdventureLogin({ supabaseConfigured }: AdventureLoginProps) {
   }
 
   return (
-    <section className="flex flex-col gap-x4">
-      <div className="flex items-center justify-between gap-x3 rounded-r4 border border-stroke-neutral-muted bg-bg-layer-default p-x5">
+    <div className="flex flex-col gap-x4">
+      <div className="flex items-center justify-between gap-x3 rounded-r4 border border-stroke-neutral-muted bg-bg-layer-default p-x4">
         <div className="flex items-center gap-x3">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/assets/zelda/ocarina.png"
             alt=""
-            className="h-11 w-11 shrink-0 rounded-r3 object-cover"
+            className="h-10 w-10 shrink-0 rounded-r3 object-cover"
           />
           <h1 className="t5-bold text-fg-neutral">{adventureId}</h1>
         </div>
@@ -170,20 +219,7 @@ export function AdventureLogin({ supabaseConfigured }: AdventureLoginProps) {
         </ActionButton>
       </div>
 
-      <div className="rounded-r4 border border-stroke-neutral-muted bg-bg-layer-default p-x5">
-        <div className="flex items-center gap-x3">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/assets/zelda/sword-shield.png"
-            alt=""
-            className="h-11 w-11 shrink-0 rounded-r3 object-cover"
-          />
-          <div>
-            <h2 className="t4-bold text-fg-neutral">{t.login.emptyCardsTitle}</h2>
-            <p className="mt-x1 t3-regular text-fg-neutral-muted">{t.login.emptyCardsBody}</p>
-          </div>
-        </div>
-      </div>
-    </section>
+      <AdventureCardFlow progress={progress} onUpdate={handleUpdateProgress} />
+    </div>
   );
 }
