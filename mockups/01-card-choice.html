@@ -6,21 +6,21 @@
   <title>목업 01 — 다음 갈래 증강 카드</title>
   <style>
     :root {
-      --bg-page: #f3f4f5;
+      --bg-page: #f7f5ee;
       --bg-surface: #ffffff;
-      --bg-muted: #f7f8f9;
+      --bg-muted: #f5f3ec;
       --fg-neutral: #1a1c20;
       --fg-muted: #555d6d;
       --fg-subtle: #868b94;
-      --stroke: #eeeff1;
-      --stroke-strong: #dcdee3;
-      --carrot: #ff6600;
-      --carrot-pressed: #e14d00;
-      --carrot-weak: #fff2ec;
-      --green: #079171;
-      --green-weak: #edfaf6;
-      --blue: #217cf9;
-      --blue-weak: #eff6ff;
+      --stroke: #e8e4d9;
+      --stroke-strong: #d8d2c3;
+      --brand: #16794f;
+      --brand-pressed: #0d5436;
+      --brand-weak: #ebf6f0;
+      --gold: #9e700d;
+      --gold-weak: #fdf6e3;
+      --blue: #245ec7;
+      --blue-weak: #edf4ff;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -64,8 +64,8 @@
     .loc {
       font-size: 12px;
       font-weight: 700;
-      color: var(--carrot-pressed);
-      background: var(--carrot-weak);
+      color: var(--brand-pressed);
+      background: var(--brand-weak);
       padding: 6px 10px;
       border-radius: 999px;
     }
@@ -106,9 +106,9 @@
     }
     .card:hover { border-color: var(--stroke-strong); background: var(--bg-muted); }
     .card[aria-pressed="true"] {
-      border-color: var(--carrot);
-      background: var(--carrot-weak);
-      box-shadow: 0 4px 14px rgba(255, 102, 0, 0.12);
+      border-color: var(--brand);
+      background: var(--brand-weak);
+      box-shadow: 0 4px 14px rgba(22, 121, 79, 0.14);
     }
     .card img {
       width: 48px;
@@ -130,10 +130,10 @@
       padding: 2px 7px;
       border-radius: 6px;
     }
-    .badge.carrot { background: var(--carrot-weak); color: var(--carrot-pressed); }
-    .badge.green { background: var(--green-weak); color: var(--green); }
+    .badge.emerald { background: var(--brand-weak); color: var(--brand-pressed); }
+    .badge.gold { background: var(--gold-weak); color: var(--gold); }
     .badge.blue { background: var(--blue-weak); color: var(--blue); }
-    .card[aria-pressed="true"] .badge.carrot { background: #ffffff; }
+    .card[aria-pressed="true"] .badge.emerald { background: #ffffff; }
     .note { font-size: 12px; color: var(--fg-subtle); }
     .body h2 { font-size: 15px; line-height: 1.3; margin-bottom: 3px; }
     .body p { font-size: 13px; color: var(--fg-muted); line-height: 1.4; }
@@ -150,13 +150,13 @@
       border-radius: 12px;
       font-size: 15px;
       font-weight: 700;
-      background: var(--carrot);
+      background: var(--brand);
       color: #ffffff;
       cursor: pointer;
     }
     .cta:disabled {
-      background: #eeeff1;
-      color: #b0b3ba;
+      background: #e8e4d9;
+      color: #9b9585;
       cursor: not-allowed;
     }
     .foot-meta {
@@ -212,7 +212,7 @@
         cards: [
           {
             badge: "추천 · 메인 직행",
-            tone: "carrot",
+            tone: "emerald",
             note: "빠른 진행",
             icon: "../public/assets/zelda/sword-shield.png",
             title: "기본 장비 챙기고 첫 던전 직행",
@@ -221,7 +221,7 @@
           },
           {
             badge: "안전 · 생존 준비",
-            tone: "green",
+            tone: "gold",
             note: "우회 5~10분",
             icon: "../public/assets/zelda/fairy-bottle.png",
             title: "요정·회복 수단부터 챙기기",
@@ -246,7 +246,7 @@
         cards: [
           {
             badge: "추천 · 이어서",
-            tone: "carrot",
+            tone: "emerald",
             note: "표준 루트",
             icon: "../public/assets/zelda/sword-shield.png",
             title: "다음 주요 던전 바로 도전",
@@ -255,7 +255,7 @@
           },
           {
             badge: "안전 · 화력 보강",
-            tone: "green",
+            tone: "gold",
             note: "재도전 감소",
             icon: "../public/assets/zelda/fairy-bottle.png",
             title: "보조 장비·마법 먼저 챙기기",
@@ -271,7 +271,7 @@
         cards: [
           {
             badge: "추천 · 합류",
-            tone: "carrot",
+            tone: "emerald",
             note: "안정적",
             icon: "../public/assets/zelda/sword-shield.png",
             title: "회복 챙기고 메인 던전 입장",

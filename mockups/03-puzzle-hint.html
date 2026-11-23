@@ -6,19 +6,20 @@
   <title>목업 03 — 3단계 퍼즐 힌트</title>
   <style>
     :root {
-      --bg-page: #f3f4f5;
+      --bg-page: #f7f5ee;
       --bg-surface: #ffffff;
-      --bg-muted: #f7f8f9;
+      --bg-muted: #f5f3ec;
       --fg-neutral: #1a1c20;
       --fg-muted: #555d6d;
       --fg-subtle: #868b94;
-      --stroke: #eeeff1;
-      --stroke-strong: #dcdee3;
-      --carrot: #ff6600;
-      --carrot-weak: #fff2ec;
-      --carrot-pressed: #e14d00;
-      --blue: #217cf9;
-      --blue-weak: #eff6ff;
+      --stroke: #e8e4d9;
+      --stroke-strong: #d8d2c3;
+      --brand: #16794f;
+      --gold: #9e700d;
+      --gold-weak: #fdf6e3;
+      --gold-stroke: #eedba5;
+      --blue: #245ec7;
+      --blue-weak: #edf4ff;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -105,8 +106,8 @@
       border: 1px solid var(--stroke);
     }
     .box.solution {
-      background: var(--carrot-weak);
-      border-color: #ffd5c0;
+      background: var(--gold-weak);
+      border-color: var(--gold-stroke);
     }
     .lv {
       font-size: 12px;
@@ -114,7 +115,7 @@
       color: var(--blue);
       margin-bottom: 4px;
     }
-    .box.solution .lv { color: var(--carrot-pressed); }
+    .box.solution .lv { color: var(--gold); }
     .box p { font-size: 14px; line-height: 1.5; }
     footer {
       margin-top: 12px;
@@ -131,7 +132,7 @@
       font-weight: 700;
       cursor: pointer;
     }
-    .brand { background: var(--carrot); color: #ffffff; border: 0; }
+    .brand { background: var(--brand); color: #ffffff; border: 0; }
     .weak { background: var(--bg-muted); color: var(--fg-neutral); border: 1px solid var(--stroke-strong); }
     .reset {
       background: none;

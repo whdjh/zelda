@@ -6,19 +6,19 @@
   <title>목업 04 — 자유 아이디 간편 로그인</title>
   <style>
     :root {
-      --bg-page: #f3f4f5;
+      --bg-page: #f7f5ee;
       --bg-surface: #ffffff;
-      --bg-muted: #f7f8f9;
+      --bg-muted: #f5f3ec;
       --fg-neutral: #1a1c20;
       --fg-muted: #555d6d;
       --fg-subtle: #868b94;
-      --stroke: #eeeff1;
-      --stroke-strong: #dcdee3;
-      --carrot: #ff6600;
-      --carrot-pressed: #e14d00;
-      --carrot-weak: #fff2ec;
-      --green: #079171;
-      --green-weak: #edfaf6;
+      --stroke: #e8e4d9;
+      --stroke-strong: #d8d2c3;
+      --brand: #16794f;
+      --brand-pressed: #0d5436;
+      --brand-weak: #ebf6f0;
+      --gold: #9e700d;
+      --gold-weak: #fdf6e3;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -61,8 +61,8 @@
     .pill {
       font-size: 12px;
       font-weight: 700;
-      color: var(--green);
-      background: var(--green-weak);
+      color: var(--brand-pressed);
+      background: var(--brand-weak);
       padding: 5px 10px;
       border-radius: 999px;
     }
@@ -112,7 +112,7 @@
       font-size: 15px;
     }
     input:focus {
-      outline: 2px solid var(--carrot);
+      outline: 2px solid var(--brand);
       outline-offset: 1px;
     }
     .helper { font-size: 12px; color: var(--fg-subtle); line-height: 1.45; }
@@ -127,7 +127,7 @@
       place-items: center;
       text-decoration: none;
     }
-    .brand { background: var(--carrot); color: #ffffff; }
+    .brand { background: var(--brand); color: #ffffff; }
     .weak { background: #ffffff; color: var(--fg-neutral); border: 1px solid var(--stroke-strong); }
     .profile {
       display: flex;
@@ -140,7 +140,7 @@
     }
     .profile img { width: 44px; height: 44px; border-radius: 12px; }
     .id-text { font-size: 16px; font-weight: 700; }
-    .sync-text { font-size: 12px; color: var(--green); font-weight: 600; margin-top: 2px; }
+    .sync-text { font-size: 12px; color: var(--brand-pressed); font-weight: 600; margin-top: 2px; }
     .hidden { display: none !important; }
     footer {
       text-align: center;

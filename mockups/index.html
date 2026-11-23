@@ -6,16 +6,17 @@
   <title>젤다 하이패스 — 기능별 목업 (당근 SEED + 젤다)</title>
   <style>
     :root {
-      --bg-page: #f7f8f9;
+      --bg-page: #f7f5ee;
       --bg-surface: #ffffff;
-      --bg-weak: #f3f4f5;
+      --bg-weak: #f5f3ec;
       --fg-neutral: #1a1c20;
       --fg-muted: #555d6d;
       --fg-subtle: #868b94;
-      --stroke: #eeeff1;
-      --carrot: #ff6600;
-      --carrot-weak: #fff2ec;
-      --carrot-contrast: #e14d00;
+      --stroke: #e8e4d9;
+      --brand: #16794f;
+      --brand-weak: #ebf6f0;
+      --brand-contrast: #0d5436;
+      --brand-stroke: #b3dec9;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -52,8 +53,8 @@
       display: inline-block;
       font-size: 12px;
       font-weight: 700;
-      color: var(--carrot-contrast);
-      background: var(--carrot-weak);
+      color: var(--brand-contrast);
+      background: var(--brand-weak);
       padding: 3px 8px;
       border-radius: 6px;
       margin-bottom: 4px;
@@ -74,8 +75,8 @@
       transition: background 0.12s, border-color 0.12s;
     }
     a.item:hover {
-      background: var(--carrot-weak);
-      border-color: #ffd5c0;
+      background: var(--brand-weak);
+      border-color: var(--brand-stroke);
     }
     a.item img {
       width: 42px;
@@ -102,11 +103,11 @@
     <div class="brand">
       <img src="../public/assets/zelda/adventure-emblem.png" alt="젤다 하이패스 문장" />
       <div>
-        <span class="eyebrow">당근 SEED · 기능별 목업</span>
+        <span class="eyebrow">SEED · 시간의 오카리나 테마</span>
         <h1>시간의 오카리나 내비</h1>
       </div>
     </div>
-    <p class="desc">당근 SEED 라이트 톤과 자체 제작 젤다 아이콘셋으로 구성한 화면별 시안입니다.</p>
+    <p class="desc">당근 SEED 컴포넌트 구조에 시간의 오카리나(코키리 에메랄드·트라이포스 골드·오카리나 블루) 색상 토큰과 3D 아이콘셋을 적용한 시안입니다.</p>
     <nav>
       <a class="item" href="./01-card-choice.html">
         <img src="../public/assets/zelda/sword-shield.png" alt="" />

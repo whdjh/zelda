@@ -1,14 +1,20 @@
-# 디자인 시스템 — 당근 SEED + 자체 젤다 이미지셋
+# 디자인 시스템 — 당근 SEED 구조 + 시간의 오카리나 컬러 토큰
 
-## 1. 당근 SEED Design 우선
+## 1. SEED 컴포넌트 + 시오 브랜드 토큰 오버라이드
 
-- 컬러 모드: `light-only` (깨끗한 화이트·뉴트럴 라이트 표면 + 당근 브랜드 오렌지 포인트)
-- 컴포넌트: `@seed-design/react` (`ActionButton`, `BottomSheet` 등) 기본 컴포넌트를 래퍼 없이 직접 사용
-- 스타일링: Tailwind CSS v4 + `@seed-design/tailwind4-theme` 토큰 우선
+- **구조/컴포넌트**: 당근 SEED Design (`@seed-design/react`, `light-only`)의 레이아웃·타이포·버튼·간격을 그대로 사용합니다.
+- **색상 토큰**: SEED 기본 당근 오렌지(`#FF6600`)를 [`src/app/globals.css`](../src/app/globals.css)에서 **《시간의 오카리나》 시그니처 팔레트**로 시맨틱 오버라이드합니다.
+
+| 역할 | SEED 시맨틱 토큰 | 시오 색상 | 용도 |
+| --- | --- | --- | --- |
+| **코키리 에메랄드 (Primary)** | `--seed-color-bg-brand-solid` / `weak` | `#16794F` / `#EBF6F0` | 주요 CTA 버튼, 선택된 증강 카드, 활성 배지 |
+| **트라이포스 골드 (Warning/Accent)** | `--seed-color-fg-warning` / `bg-warning-weak` | `#9E700D` / `#FDF6E3` | 안전 준비 카드, 퍼즐 해법 강조 |
+| **오카리나 블루 (Informative)** | `--seed-color-fg-informative` / `bg-informative-weak` | `#245EC7` / `#EDF4FF` | 이동·노래 갈래, 나비 3단계 힌트 |
+| **하이랄 파치먼트 (Surface)** | `--seed-color-bg-layer-basement` / `neutral-muted` | `#F7F5EE` / `#F5F3EC` | 따뜻한 라이트 배경, 카드 구분선 `#E8E4D9` |
 
 ## 2. 자체 젤다 이미지셋 (`public/assets/zelda/`)
 
-외부 저작권 이미지나 게임 스크린샷을 복제하지 않고, 당근 SEED 라이트 톤과 어울리는 자체 제작 3D/일러스트 아이콘을 사용합니다.
+외부 저작권 이미지나 게임 스크린샷을 복제하지 않고, 위 팔레트에 맞춘 자체 제작 3D 아이콘을 사용합니다.
 
 | 파일 | 용도 |
 | --- | --- |

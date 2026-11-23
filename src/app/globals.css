@@ -3,10 +3,35 @@
 @import "tailwindcss";
 @import "@seed-design/tailwind4-theme";
 
+/* 시간의 오카리나 시그니처 브랜드 토큰 (SEED 기본 당근 오렌지 -> 코키리 에메랄드 + 따뜻한 하이랄 라이트 톤) */
+:root[data-seed][data-seed-color-mode="light-only"] {
+  --seed-color-bg-brand-solid: #16794f;
+  --seed-color-bg-brand-solid-pressed: #10603e;
+  --seed-color-bg-brand-weak: #ebf6f0;
+  --seed-color-bg-brand-weak-pressed: #d7ede1;
+  --seed-color-fg-brand: #16794f;
+  --seed-color-fg-brand-contrast: #0d5436;
+  --seed-color-fg-on-brand-solid: #ffffff;
+  --seed-color-stroke-brand-solid: #16794f;
+  --seed-color-stroke-brand-weak: #b3dec9;
+
+  --seed-color-bg-layer-basement: #f7f5ee;
+  --seed-color-bg-neutral-muted: #f5f3ec;
+  --seed-color-stroke-neutral-muted: #e8e4d9;
+
+  --seed-color-fg-informative: #245ec7;
+  --seed-color-fg-informative-contrast: #174499;
+  --seed-color-bg-informative-weak: #edf4ff;
+
+  --seed-color-fg-warning: #9e700d;
+  --seed-color-fg-warning-contrast: #714e08;
+  --seed-color-bg-warning-weak: #fdf6e3;
+}
+
 @layer base {
   body {
     margin: 0;
-    background: var(--seed-color-bg-layer-default);
+    background: var(--seed-color-bg-layer-basement);
     color: var(--seed-color-fg-neutral);
     font-family: system-ui, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
     word-break: keep-all;
@@ -14,7 +39,7 @@
   }
 
   :focus-visible {
-    outline: 2px solid var(--seed-color-fg-informative);
+    outline: 2px solid var(--seed-color-fg-brand);
     outline-offset: 4px;
   }
 

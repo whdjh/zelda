@@ -6,17 +6,18 @@
   <title>목업 02 — 선택한 갈래 진행 화면</title>
   <style>
     :root {
-      --bg-page: #f3f4f5;
+      --bg-page: #f7f5ee;
       --bg-surface: #ffffff;
-      --bg-muted: #f7f8f9;
+      --bg-muted: #f5f3ec;
       --fg-neutral: #1a1c20;
       --fg-muted: #555d6d;
       --fg-subtle: #868b94;
-      --stroke: #eeeff1;
-      --stroke-strong: #dcdee3;
-      --carrot: #ff6600;
-      --carrot-pressed: #e14d00;
-      --carrot-weak: #fff2ec;
+      --stroke: #e8e4d9;
+      --stroke-strong: #d8d2c3;
+      --brand: #16794f;
+      --brand-pressed: #0d5436;
+      --brand-weak: #ebf6f0;
+      --brand-stroke: #b3dec9;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -59,14 +60,14 @@
     .state {
       font-size: 12px;
       font-weight: 700;
-      color: var(--carrot-pressed);
+      color: var(--brand-pressed);
     }
     .hero {
       margin-top: 12px;
       padding: 16px;
       border-radius: 18px;
-      background: var(--carrot-weak);
-      border: 1px solid #ffe8db;
+      background: var(--brand-weak);
+      border: 1px solid var(--brand-stroke);
       display: flex;
       align-items: center;
       gap: 12px;
@@ -81,7 +82,7 @@
       display: inline-block;
       font-size: 11px;
       font-weight: 700;
-      color: var(--carrot-pressed);
+      color: var(--brand-pressed);
       background: #ffffff;
       padding: 2px 7px;
       border-radius: 6px;
@@ -113,7 +114,7 @@
       margin-top: 3px;
       width: 18px;
       height: 18px;
-      accent-color: var(--carrot);
+      accent-color: var(--brand);
       flex-shrink: 0;
     }
     label.step.done span {
@@ -151,7 +152,7 @@
       cursor: pointer;
     }
     .btn-weak { background: var(--bg-muted); color: var(--fg-neutral); border: 1px solid var(--stroke-strong); }
-    .btn-brand { background: var(--carrot); color: #ffffff; border: 0; }
+    .btn-brand { background: var(--brand); color: #ffffff; border: 0; }
     @media (max-width: 420px) {
       body { padding: 0; background: var(--bg-surface); }
       .phone { max-width: none; height: 100dvh; border: 0; border-radius: 0; }
