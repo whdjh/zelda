@@ -17,19 +17,19 @@ function createMemoryStorage() {
   };
 }
 
-test("자유 아이디 검증: 한글·영문·숫자·하이픈·언더스코어 허용", () => {
+test("자유 아이디 검증: 허용 문자와 공백 정리", () => {
   assert.deepEqual(validateAdventureId("  hyrule_link-01 "), { ok: true, value: "hyrule_link-01" });
   assert.deepEqual(validateAdventureId("코키리초보"), { ok: true, value: "코키리초보" });
 });
 
-test("자유 아이디 검증: 길이·특수문자·개인정보 형태 차단", () => {
-  assert.equal(validateAdventureId("").ok, false);
-  assert.equal(validateAdventureId("a").ok, false);
-  assert.equal(validateAdventureId("a".repeat(25)).ok, false);
-  assert.equal(validateAdventureId("link@hyrule.com").ok, false);
-  assert.equal(validateAdventureId("010-1234-5678").ok, false);
-  assert.equal(validateAdventureId("01012345678").ok, false);
-  assert.equal(validateAdventureId("link hyrule").ok, false);
+test("자유 아이디 검증: 오류 코드 반환", () => {
+  assert.deepEqual(validateAdventureId(""), { ok: false, code: "empty" });
+  assert.deepEqual(validateAdventureId("a"), { ok: false, code: "length" });
+  assert.deepEqual(validateAdventureId("a".repeat(25)), { ok: false, code: "length" });
+  assert.deepEqual(validateAdventureId("link@hyrule.com"), { ok: false, code: "pii" });
+  assert.deepEqual(validateAdventureId("010-1234-5678"), { ok: false, code: "pii" });
+  assert.deepEqual(validateAdventureId("01012345678"), { ok: false, code: "pii" });
+  assert.deepEqual(validateAdventureId("link hyrule"), { ok: false, code: "charset" });
 });
 
 test("로컬스토리지 저장·복원·초기화 및 손상 JSON 복구", () => {

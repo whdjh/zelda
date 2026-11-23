@@ -1,26 +1,20 @@
 export const ADVENTURE_ID_STORAGE_KEY = "zelda-highpass:adventure-id:v1";
 
+export type AdventureIdErrorCode = "empty" | "pii" | "length" | "charset";
+
 export type ValidationResult =
   | { ok: true; value: string }
-  | { ok: false; error: string };
+  | { ok: false; code: AdventureIdErrorCode };
 
 const ALLOWED_ID_PATTERN = /^[가-힣ㄱ-ㅎㅏ-ㅣa-zA-Z0-9_-]+$/;
 const PHONE_LIKE_PATTERN = /^01[016789]-?\d{3,4}-?\d{4}$/;
 
 export function validateAdventureId(raw: string): ValidationResult {
   const value = raw.trim();
-  if (!value) {
-    return { ok: false, error: "모험 아이디를 입력해 주세요." };
-  }
-  if (value.includes("@") || PHONE_LIKE_PATTERN.test(value)) {
-    return { ok: false, error: "이메일·전화번호 같은 개인정보 대신 편한 별명을 적어 주세요." };
-  }
-  if (value.length < 2 || value.length > 24) {
-    return { ok: false, error: "아이디는 2~24자로 입력해 주세요." };
-  }
-  if (!ALLOWED_ID_PATTERN.test(value)) {
-    return { ok: false, error: "한글, 영문, 숫자, -, _ 만 사용할 수 있어요." };
-  }
+  if (!value) return { ok: false, code: "empty" };
+  if (value.includes("@") || PHONE_LIKE_PATTERN.test(value)) return { ok: false, code: "pii" };
+  if (value.length < 2 || value.length > 24) return { ok: false, code: "length" };
+  if (!ALLOWED_ID_PATTERN.test(value)) return { ok: false, code: "charset" };
   return { ok: true, value };
 }
 

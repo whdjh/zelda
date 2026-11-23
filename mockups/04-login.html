@@ -157,48 +157,39 @@
 <body>
   <div class="phone">
     <header>
-      <a class="back" href="./index.html">‹ 목업 목록</a>
-      <span class="pill">개인정보 없음</span>
+      <a class="back" href="./index.html">‹ 목록</a>
     </header>
 
     <section class="content" id="loggedOutView">
       <div class="intro">
-        <img src="../public/assets/zelda/adventure-emblem.png" alt="모험 문장" />
-        <h1>모험 아이디만 적고 시작해요</h1>
-        <p class="sub">비밀번호·이메일·JWT 없이 자유 아이디 하나만 입력합니다. 브라우저에 저장돼 계속 로그인 상태가 유지돼요.</p>
+        <img src="../public/assets/zelda/adventure-emblem.png" alt="" />
+        <h1>시간의 오카리나</h1>
       </div>
 
       <form class="panel" id="loginForm">
         <label>
-          내 모험 아이디
-          <input id="idInput" type="text" placeholder="예: hyrule-link, 코키리01" maxlength="24" required />
+          모험 아이디
+          <input id="idInput" type="text" placeholder="hyrule-link" maxlength="24" required />
         </label>
-        <p class="helper">* 이메일·전화번호 같은 개인정보는 넣지 말고, 편한 별명만 적어 주세요.</p>
-        <button class="btn brand" type="submit">이 아이디로 시작하기</button>
+        <p class="helper">개인정보 없이 편한 아이디만 적어 주세요.</p>
+        <button class="btn brand" type="submit">시작하기</button>
       </form>
     </section>
 
     <section class="content hidden" id="loggedInView">
-      <div class="intro">
-        <img src="../public/assets/zelda/adventure-emblem.png" alt="" />
-        <h1>로그인 유지 중</h1>
-        <p class="sub">localStorage에 저장되어 새로고침해도 그대로 이어집니다.</p>
-      </div>
-
       <div class="panel">
         <div class="profile">
-          <img src="../public/assets/zelda/sword-shield.png" alt="" />
+          <img src="../public/assets/zelda/adventure-emblem.png" alt="" />
           <div>
             <div class="id-text" id="savedIdText">hyrule-link</div>
-            <div class="sync-text">로컬 자동 로그인 유지 · Supabase 동기화 준비</div>
           </div>
         </div>
-        <a class="btn brand" href="./01-card-choice.html">증강 카드 고르러 가기</a>
-        <button class="btn weak" type="button" id="logoutBtn">다른 아이디로 바꾸기</button>
+        <a class="btn brand" href="./01-card-choice.html">증강 카드 보기</a>
+        <button class="btn weak" type="button" id="logoutBtn">아이디 변경</button>
       </div>
     </section>
 
-    <footer>비밀번호 없는 간편 모험 아이디 · localStorage + Supabase DB</footer>
+    <footer></footer>
   </div>
 
   <script>
