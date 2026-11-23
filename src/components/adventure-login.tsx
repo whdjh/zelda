@@ -106,7 +106,7 @@ export function AdventureLogin({ supabaseConfigured }: AdventureLoginProps) {
         <div className="mb-x5 flex items-center gap-x3">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="/assets/zelda/adventure-emblem.png"
+            src="/assets/zelda/ocarina.png"
             alt=""
             className="h-12 w-12 shrink-0 rounded-r3 object-cover"
           />
@@ -132,7 +132,6 @@ export function AdventureLogin({ supabaseConfigured }: AdventureLoginProps) {
             aria-invalid={Boolean(errorCode)}
             className="min-h-12 w-full rounded-r3 border border-stroke-neutral-subtle bg-bg-layer-default px-x4 t4-regular text-fg-neutral placeholder:text-fg-placeholder"
           />
-          <p className="t2-regular text-fg-neutral-subtle">{t.login.helper}</p>
           {errorCode && (
             <p role="alert" className="t3-regular text-fg-critical">
               {t.login.validation[errorCode]}
@@ -160,7 +159,7 @@ export function AdventureLogin({ supabaseConfigured }: AdventureLoginProps) {
         <div className="flex items-center gap-x3">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="/assets/zelda/adventure-emblem.png"
+            src="/assets/zelda/ocarina.png"
             alt=""
             className="h-11 w-11 shrink-0 rounded-r3 object-cover"
           />

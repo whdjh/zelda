@@ -9,7 +9,6 @@ export const ko = {
     title: "시간의 오카리나",
     idLabel: "모험 아이디",
     idPlaceholder: "hyrule-link",
-    helper: "개인정보 없이 편한 아이디만 적어 주세요.",
     submit: "시작하기",
     submitting: "불러오는 중...",
     loading: "불러오는 중...",
