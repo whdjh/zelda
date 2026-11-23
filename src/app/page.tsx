@@ -4,10 +4,12 @@ export const dynamic = "force-dynamic";
 
 export default function Home() {
   return (
-    <div className="page-shell px-x5 sm:px-x6">
-      <main id="main" tabIndex={-1} className="mx-auto flex min-h-dvh max-w-md flex-col justify-center py-x8">
-        <AdventureShell />
-      </main>
-    </div>
+    <main
+      id="main"
+      tabIndex={-1}
+      className="mx-auto flex min-h-dvh w-full max-w-md flex-col px-x4 pt-x4 pb-[max(env(safe-area-inset-bottom),1rem)]"
+    >
+      <AdventureShell />
+    </main>
   );
 }
