@@ -11,7 +11,7 @@ async function markdownFiles(directory) {
   return files.flat();
 }
 
-const files = ["README.md", "START-HERE.md", "AGENTS.md", ...await markdownFiles("docs"), ...await markdownFiles("content")];
+const files = ["README.md", "START-HERE.md", "AGENTS.md", ...await markdownFiles("docs")];
 const errors = [];
 let checked = 0;
 for (const file of files) {
@@ -34,5 +34,5 @@ if (errors.length) {
   console.error(errors.join("\n"));
   process.exitCode = 1;
 } else {
-  console.log(`문서 ${files.length}개 / 내부 파일 링크 ${checked}개 확인 (외부 URL·문서 내 앵커 제외)`);
+  console.log(`문서 ${files.length}개 / 내부 파일 링크 ${checked}개 확인`);
 }

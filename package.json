@@ -1,6 +1,6 @@
 {
   "name": "zelda-highpass",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "engines": {
@@ -8,20 +8,19 @@
   },
   "scripts": {
     "dev": "next dev --webpack",
-    "build": "npm run check:content && next build --webpack",
+    "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "next typegen && tsc --noEmit",
     "test": "node --test src/lib/*.test.ts",
-    "test:e2e": "playwright test",
     "check:docs": "node scripts/check-docs.mjs",
-    "check:content": "node scripts/check-content.ts",
-    "check": "npm run check:docs && npm run check:content && npm run lint && npm run typecheck && npm test"
+    "check": "npm run check:docs && npm run lint && npm run typecheck && npm test"
   },
   "dependencies": {
     "@seed-design/css": "^3.2.0",
     "@seed-design/react": "^3.2.0",
     "@seed-design/tailwind4-theme": "^3.1.0",
+    "@supabase/supabase-js": "^2.119.2",
     "next": "^16.4.5",
     "react": "^19.3.1",
     "react-dom": "^19.3.1"

@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>목업 01 — 다음 갈래 증강 카드</title>
+  <style>
+    :root {
+      --bg-page: #f3f4f5;
+      --bg-surface: #ffffff;
+      --bg-muted: #f7f8f9;
+      --fg-neutral: #1a1c20;
+      --fg-muted: #555d6d;
+      --fg-subtle: #868b94;
+      --stroke: #eeeff1;
+      --stroke-strong: #dcdee3;
+      --carrot: #ff6600;
+      --carrot-pressed: #e14d00;
+      --carrot-weak: #fff2ec;
+      --green: #079171;
+      --green-weak: #edfaf6;
+      --blue: #217cf9;
+      --blue-weak: #eff6ff;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+      background: var(--bg-page);
+      color: var(--fg-neutral);
+      min-height: 100dvh;
+      display: grid;
+      place-items: center;
+      padding: 12px;
+      word-break: keep-all;
+    }
+    .phone {
+      width: 100%;
+      max-width: 390px;
+      height: min(812px, calc(100dvh - 24px));
+      background: var(--bg-surface);
+      border: 1px solid var(--stroke-strong);
+      border-radius: 28px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+    }
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .back {
+      color: var(--fg-muted);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 7px 10px;
+      border-radius: 10px;
+      background: var(--bg-muted);
+    }
+    .loc {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--carrot-pressed);
+      background: var(--carrot-weak);
+      padding: 6px 10px;
+      border-radius: 999px;
+    }
+    .heading {
+      margin: 12px 0 10px;
+    }
+    .heading h1 {
+      font-size: 20px;
+      line-height: 1.3;
+      letter-spacing: -0.02em;
+    }
+    .heading p {
+      margin-top: 3px;
+      font-size: 13px;
+      color: var(--fg-muted);
+    }
+    .deck {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 10px;
+      min-height: 0;
+    }
+    .card {
+      width: 100%;
+      text-align: left;
+      background: var(--bg-surface);
+      color: var(--fg-neutral);
+      border: 1.5px solid var(--stroke);
+      border-radius: 18px;
+      padding: 13px 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      transition: border-color 0.14s, background 0.14s, transform 0.1s;
+    }
+    .card:hover { border-color: var(--stroke-strong); background: var(--bg-muted); }
+    .card[aria-pressed="true"] {
+      border-color: var(--carrot);
+      background: var(--carrot-weak);
+      box-shadow: 0 4px 14px rgba(255, 102, 0, 0.12);
+    }
+    .card img {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      flex-shrink: 0;
+    }
+    .body { flex: 1; min-width: 0; }
+    .top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+    .badge {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 6px;
+    }
+    .badge.carrot { background: var(--carrot-weak); color: var(--carrot-pressed); }
+    .badge.green { background: var(--green-weak); color: var(--green); }
+    .badge.blue { background: var(--blue-weak); color: var(--blue); }
+    .card[aria-pressed="true"] .badge.carrot { background: #ffffff; }
+    .note { font-size: 12px; color: var(--fg-subtle); }
+    .body h2 { font-size: 15px; line-height: 1.3; margin-bottom: 3px; }
+    .body p { font-size: 13px; color: var(--fg-muted); line-height: 1.4; }
+    footer {
+      margin-top: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .cta {
+      width: 100%;
+      min-height: 48px;
+      border: 0;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 700;
+      background: var(--carrot);
+      color: #ffffff;
+      cursor: pointer;
+    }
+    .cta:disabled {
+      background: #eeeff1;
+      color: #b0b3ba;
+      cursor: not-allowed;
+    }
+    .foot-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: var(--fg-subtle);
+    }
+    .ghost {
+      background: none;
+      border: 0;
+      color: var(--fg-muted);
+      font-size: 12px;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+    @media (max-width: 420px) {
+      body { padding: 0; background: var(--bg-surface); }
+      .phone { max-width: none; height: 100dvh; border: 0; border-radius: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="phone">
+    <header>
+      <a class="back" href="./index.html">‹ 목업 목록</a>
+      <span class="loc" id="stageLabel">예시 지점 · 1단계</span>
+    </header>
+
+    <section class="heading">
+      <h1 id="stageTitle">다음 갈래를 골라보세요</h1>
+      <p id="stageSub">스크롤 없이 카드 하나를 고르면 다음 선택으로 이어집니다.</p>
+    </section>
+
+    <section class="deck" id="cardDeck" aria-label="다음 갈래 카드"></section>
+
+    <footer>
+      <button class="cta" id="confirmBtn" disabled>갈래를 하나 선택하세요</button>
+      <div class="foot-meta">
+        <span>* UI 시안 예시 (플레이하며 실제 데이터로 채움)</span>
+        <button class="ghost" id="resetBtn" type="button">처음으로</button>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    const stages = {
+      start: {
+        label: "예시 · 현재 지점",
+        title: "어느 방향으로 갈까요?",
+        sub: "내 플레이 스타일에 맞는 증강 카드 하나를 고르세요.",
+        cards: [
+          {
+            badge: "추천 · 메인 직행",
+            tone: "carrot",
+            note: "빠른 진행",
+            icon: "../public/assets/zelda/sword-shield.png",
+            title: "기본 장비 챙기고 첫 던전 직행",
+            desc: "헤매는 동선을 줄이고 바로 스토리 핵심으로 들어갑니다.",
+            next: "afterMain"
+          },
+          {
+            badge: "안전 · 생존 준비",
+            tone: "green",
+            note: "우회 5~10분",
+            icon: "../public/assets/zelda/fairy-bottle.png",
+            title: "요정·회복 수단부터 챙기기",
+            desc: "보스전에서 쓰러져 다시 오는 시간을 줄여 줍니다.",
+            next: "afterPrep"
+          },
+          {
+            badge: "자유 · 편의 먼저",
+            tone: "blue",
+            note: "이동 단축",
+            icon: "../public/assets/zelda/ocarina.png",
+            title: "노래·이동 수단부터 열기",
+            desc: "앞으로 왕복할 거리를 먼저 줄여 두고 출발합니다.",
+            next: "afterMain"
+          }
+        ]
+      },
+      afterMain: {
+        label: "예시 · 다음 갈래",
+        title: "완료! 다음 갈래를 고르세요",
+        sub: "현재 상태에 맞춰 새 카드 2~3장이 펼쳐집니다.",
+        cards: [
+          {
+            badge: "추천 · 이어서",
+            tone: "carrot",
+            note: "표준 루트",
+            icon: "../public/assets/zelda/sword-shield.png",
+            title: "다음 주요 던전 바로 도전",
+            desc: "방금 얻은 도구를 그대로 써서 흐름을 이어갑니다.",
+            next: "start"
+          },
+          {
+            badge: "안전 · 화력 보강",
+            tone: "green",
+            note: "재도전 감소",
+            icon: "../public/assets/zelda/fairy-bottle.png",
+            title: "보조 장비·마법 먼저 챙기기",
+            desc: "전투가 부담스럽다면 한 템포 준비하고 들어갑니다.",
+            next: "start"
+          }
+        ]
+      },
+      afterPrep: {
+        label: "예시 · 준비 완료",
+        title: "준비 끝! 이제 본 루트로",
+        sub: "안전 장비를 챙겼으니 편하게 다음 목표를 고릅니다.",
+        cards: [
+          {
+            badge: "추천 · 합류",
+            tone: "carrot",
+            note: "안정적",
+            icon: "../public/assets/zelda/sword-shield.png",
+            title: "회복 챙기고 메인 던전 입장",
+            desc: "실수해도 버틸 여유가 생겨 첫 플레이에 편합니다.",
+            next: "afterMain"
+          },
+          {
+            badge: "자유 · 이동 단축",
+            tone: "blue",
+            note: "선택",
+            icon: "../public/assets/zelda/ocarina.png",
+            title: "오카리나 이동 곡 먼저 익히기",
+            desc: "맵 이동을 더 빠르게 만들고 싶을 때 선택합니다.",
+            next: "afterMain"
+          }
+        ]
+      }
+    };
+
+    let current = "start";
+    let picked = null;
+    const deck = document.getElementById("cardDeck");
+    const btn = document.getElementById("confirmBtn");
+
+    function render() {
+      const stage = stages[current];
+      picked = null;
+      document.getElementById("stageLabel").textContent = stage.label;
+      document.getElementById("stageTitle").textContent = stage.title;
+      document.getElementById("stageSub").textContent = stage.sub;
+      deck.innerHTML = "";
+      btn.disabled = true;
+      btn.textContent = "갈래를 하나 선택하세요";
+
+      stage.cards.forEach((card) => {
+        const el = document.createElement("button");
+        el.type = "button";
+        el.className = "card";
+        el.setAttribute("aria-pressed", "false");
+        el.innerHTML = `
+          <img src="${card.icon}" alt="" />
+          <div class="body">
+            <div class="top">
+              <span class="badge ${card.tone}">${card.badge}</span>
+              <span class="note">${card.note}</span>
+            </div>
+            <h2>${card.title}</h2>
+            <p>${card.desc}</p>
+          </div>
+        `;
+        el.addEventListener("click", () => {
+          deck.querySelectorAll(".card").forEach((c) => c.setAttribute("aria-pressed", "false"));
+          el.setAttribute("aria-pressed", "true");
+          picked = card;
+          btn.disabled = false;
+          btn.textContent = `「${card.title}」 선택`;
+        });
+        deck.appendChild(el);
+      });
+    }
+
+    btn.addEventListener("click", () => {
+      if (!picked) return;
+      current = picked.next;
+      render();
+    });
+    document.getElementById("resetBtn").addEventListener("click", () => {
+      current = "start";
+      render();
+    });
+    render();
+  </script>
+</body>
+</html>

@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>목업 03 — 3단계 퍼즐 힌트</title>
+  <style>
+    :root {
+      --bg-page: #f3f4f5;
+      --bg-surface: #ffffff;
+      --bg-muted: #f7f8f9;
+      --fg-neutral: #1a1c20;
+      --fg-muted: #555d6d;
+      --fg-subtle: #868b94;
+      --stroke: #eeeff1;
+      --stroke-strong: #dcdee3;
+      --carrot: #ff6600;
+      --carrot-weak: #fff2ec;
+      --carrot-pressed: #e14d00;
+      --blue: #217cf9;
+      --blue-weak: #eff6ff;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+      background: var(--bg-page);
+      color: var(--fg-neutral);
+      min-height: 100dvh;
+      display: grid;
+      place-items: center;
+      padding: 12px;
+      word-break: keep-all;
+    }
+    .phone {
+      width: 100%;
+      max-width: 390px;
+      height: min(812px, calc(100dvh - 24px));
+      background: var(--bg-surface);
+      border: 1px solid var(--stroke-strong);
+      border-radius: 28px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+    }
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .back {
+      color: var(--fg-muted);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 7px 10px;
+      border-radius: 10px;
+      background: var(--bg-muted);
+    }
+    .badge {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--blue);
+      background: var(--blue-weak);
+      padding: 5px 10px;
+      border-radius: 999px;
+    }
+    .problem {
+      margin: 14px 0 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .problem img {
+      width: 50px;
+      height: 50px;
+      border-radius: 14px;
+      flex-shrink: 0;
+    }
+    .problem h1 { font-size: 18px; line-height: 1.3; }
+    .problem p { margin-top: 3px; font-size: 13px; color: var(--fg-muted); }
+    .hints {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      overflow-y: auto;
+    }
+    .empty {
+      margin: auto 0;
+      text-align: center;
+      padding: 24px 16px;
+      border: 1px dashed var(--stroke-strong);
+      border-radius: 16px;
+      background: var(--bg-muted);
+      color: var(--fg-muted);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .box {
+      padding: 14px 15px;
+      border-radius: 16px;
+      background: var(--bg-muted);
+      border: 1px solid var(--stroke);
+    }
+    .box.solution {
+      background: var(--carrot-weak);
+      border-color: #ffd5c0;
+    }
+    .lv {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--blue);
+      margin-bottom: 4px;
+    }
+    .box.solution .lv { color: var(--carrot-pressed); }
+    .box p { font-size: 14px; line-height: 1.5; }
+    footer {
+      margin-top: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .row { display: flex; gap: 8px; }
+    button.btn {
+      flex: 1;
+      min-height: 46px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .brand { background: var(--carrot); color: #ffffff; border: 0; }
+    .weak { background: var(--bg-muted); color: var(--fg-neutral); border: 1px solid var(--stroke-strong); }
+    .reset {
+      background: none;
+      border: 0;
+      color: var(--fg-subtle);
+      font-size: 12px;
+      text-decoration: underline;
+      cursor: pointer;
+      align-self: center;
+      padding: 4px;
+    }
+    @media (max-width: 420px) {
+      body { padding: 0; background: var(--bg-surface); }
+      .phone { max-width: none; height: 100dvh; border: 0; border-radius: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="phone">
+    <header>
+      <a class="back" href="./02-active-guide.html">‹ 진행 화면</a>
+      <span class="badge">스포일러 방지</span>
+    </header>
+
+    <section class="problem">
+      <img src="../public/assets/zelda/hint-fairy.png" alt="" />
+      <div>
+        <h1>중앙 바닥을 통과할 수 없어요</h1>
+        <p>정답은 직접 누르기 전까지 화면에 표시되지 않아요.</p>
+      </div>
+    </section>
+
+    <section class="hints" id="hintList" aria-live="polite"></section>
+
+    <footer>
+      <div class="row">
+        <button class="btn brand" id="nextBtn" type="button">힌트 1 보기 (관찰)</button>
+        <button class="btn weak" id="solveBtn" type="button">바로 정답</button>
+      </div>
+      <button class="reset" id="resetBtn" type="button">힌트 다시 숨기기</button>
+    </footer>
+  </div>
+
+  <script>
+    const hints = [
+      { label: "힌트 1 · 관찰", text: "바닥 재질과 위쪽 난간을 함께 살펴보세요.", isSolution: false },
+      { label: "힌트 2 · 단서", text: "위층으로 올라가 중앙을 내려다보세요. 벽의 적은 먼저 정리하면 안전해요.", isSolution: false },
+      { label: "해법 · 정답", text: "높은 난간에서 중앙 거미줄 위로 뛰어내리면 아래층으로 내려갈 수 있습니다.", isSolution: true }
+    ];
+    let count = 0;
+    const list = document.getElementById("hintList");
+    const nextBtn = document.getElementById("nextBtn");
+    const solveBtn = document.getElementById("solveBtn");
+
+    function render() {
+      list.innerHTML = "";
+      if (count === 0) {
+        list.innerHTML = `<div class="empty">아직 열린 힌트가 없어요.<br />먼저 <strong>힌트 1</strong>부터 살짝 열어볼까요?</div>`;
+      } else {
+        for (let i = 0; i < count; i++) {
+          const h = hints[i];
+          const div = document.createElement("div");
+          div.className = "box" + (h.isSolution ? " solution" : "");
+          div.innerHTML = `<div class="lv">${h.label}</div><p>${h.text}</p>`;
+          list.appendChild(div);
+        }
+      }
+      if (count >= hints.length) {
+        nextBtn.style.display = "none";
+        solveBtn.style.display = "none";
+      } else {
+        nextBtn.style.display = "";
+        solveBtn.style.display = count === hints.length - 1 ? "none" : "";
+        nextBtn.textContent = ["힌트 1 보기 (관찰)", "힌트 2 보기 (단서)", "해법 보기"][count];
+      }
+    }
+
+    nextBtn.addEventListener("click", () => { if (count < hints.length) count++; render(); });
+    solveBtn.addEventListener("click", () => { count = hints.length; render(); });
+    document.getElementById("resetBtn").addEventListener("click", () => { count = 0; render(); });
+    render();
+  </script>
+</body>
+</html>

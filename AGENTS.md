@@ -1,63 +1,43 @@
-# AGENTS.md — AI 개발·조사 에이전트 필수 규칙
+# AGENTS.md — AI 개발·공략 파트너 규칙
 
 ## 제품 정체성
 
-'가장 짧은 지도 경로'가 아니라 **보통 실력 이용자의 안전하고 빠른 엔딩**을 위한 한국어 시오 모바일 내비게이션. 퍼즐은 직접 풀 재미를 지키고 답은 요청받을 때만 공개한다.
+《젤다의 전설 시간의 오카리나》(Nintendo Switch 2)를 처음 플레이하는 한국어 이용자를 위한 **증강 카드형 모바일 내비게이션**.
 
-현재 범위는 **메인 `/` 하나에서 노선·공략·힌트·로컬 진행도·백업을 사용하는 것**이다. 네비바·사이드바·별도 역/퍼즐/로그인 페이지와 미래 기능 준비 코드는 두지 않는다. 출처 기반 초안을 앱에서 검수하되 플레이 검증 완료로 표시하지 않는다. 전체 공략은 스토리·던전·보스·퍼즐을 포함하고 100% 수집의 세부 범위는 별도 확정한다.
+- 긴 스크롤 노선 대신 **현재 지점에서 선택할 수 있는 다음 갈래 2~3장(증강 카드)**을 추천한다.
+- **100% 수집 공략은 제외**한다(실시간 지도·수집품 추적은 공식 `ZELDA NOTES` 영역).
+- 퍼즐은 직접 풀 재미를 지키고, **관찰 → 단서 → 해법 3단계 힌트**를 요청받을 때만 DOM에 렌더링한다.
+- 외부 참고 공략 링크는 **GameWith 한 곳**으로 통일한다.
+- 공략과 카드를 한 번에 대량 작성하지 않고, **사용자와 함께 플레이하며 검증된 구간만 한 장씩 적립**한다.
 
 ## 먼저 읽을 문서
 
-1. `START-HERE.md`, `docs/product/01-prd.md`, `docs/decisions/001-architecture-decisions.md`
-2. 공략: `docs/game/01-route-criteria.md`, `docs/game/02-research-protocol.md`, `docs/game/04-hint-policy.md`
-3. UI: `docs/design/03-ux-flows.md`, `docs/design/04-component-guidelines.md`, `docs/design/05-seed-token-policy.md`
-4. 상태/콘텐츠: `docs/architecture/01-technical-design.md`, `docs/architecture/02-content-model.md`, `docs/architecture/03-progress-routing.md`
-5. 후속 후보: `docs/product/05-future-expansion.md` (현재 구현 범위 아님)
-6. 개발/검증: `docs/development/01-local-setup.md`, `docs/development/02-project-status.md`, `docs/quality/01-validation.md`, `docs/quality/02-rights-privacy.md`
+- `START-HERE.md`
+- `docs/01-product-direction.md`
+- `docs/02-design-system.md`
+- `docs/03-supabase-login.md`
+- `docs/04-status.md`
 
 ## 절대 지킬 규칙
 
-1. **사실을 지어내지 않는다.** 게임의 한국어 이름/조건/경로/단축 시간은 `판본 + 출처 + 검증 상태`를 기록한다. Switch 2판에서 검증 안 한 과거판 공략은 미검증으로 남긴다.
-2. **합의한 기술 선택을 임의로 뒤집지 않는다.** Next.js + TS, SEED, Tailwind v4 + SEED 토큰, 필요 시 CSS Modules, `useState`와 조건부 Context, localStorage 백업이 현재 사용 흐름이다. **Next.js 서버 기능 + Supabase PostgreSQL/Auth**는 후속 도입 시의 기술 선택이며 준비 코드·의존성은 두지 않는다. **Jotai/Zustand와 별도 Express/Django 서버는 실제 필요 전 도입 금지**.
-3. **SEED 토큰을 재사용한다.** Primitive/Semantic 토큰을 중복 생성하거나 토스 3단계 체계를 복제하지 않는다. 프로젝트 고유 상태/노선도에 필요한 예외만 정의하고 기록한다.
-4. **컴포넌트 책임을 먼저 정한다.** SEED Button/Sheet 같은 래퍼, `Base*`/`Generic*`/`Universal*` 등의 미래 확장용 추상화 금지. 실제 중복 또는 독립적인 동작·접근성 책임이 있을 때만 추출.
-5. **최소 상태부터 시작한다.** 로컬 UI에는 `useState`. 공유 경계에서 실제 props drilling이 있을 때만 `useContext`. Context를 전역 저장소로 남용하지 않는다.
-6. **진행도 수정 후 경로 추천은 규칙 기반.** AI가 게임 사실이나 노선 좌표를 생성하지 않는다. 조건 확인 → 목적지까지 남은 연결 계산 → 노선 배치 재구성. 완료 기록은 조건 때문에 차단하지 않는다. 완료를 암묵적으로 추정하지 않는다.
-7. **스포일러는 단계적으로 공개한다.** 전체 노선을 기본 공개한다. 점의 이름은 호버·길게 누르기·키보드 포커스로, 상세는 탭으로 연다. 엄격 설정에서만 미래 이름을 가린다. 정답은 명시적 동작 때만 DOM에 나타나게 한다. 블러만을 보호 수단으로 쓰지 않는다.
-8. **권리 침해를 피한다.** 외부 영상·이미지·지도·공략 문장 복제 금지. 자체 문구·자체 도형 우선, 직접 녹화도 자동으로 사용 허가가 생기는 건 아니다.
-9. **저장과 장애 처리.** `localStorage` 스키마 버전, 백업·복원, 파손된 JSON 및 스토리지 제한, SSR hydration 차이를 검증.
-10. **서버를 추후 도입할 때 권한 경계를 지킨다.** Server Action마다 인증 사용자를 검증하고 입력/콘텐츠 ID를 검사한다. DB는 `auth.uid() = user_id` RLS 적용. 사용자 ID를 클라이언트 입력에서 신뢰하지 않는다. 서비스 역할 키는 사용하지 않는다. 서버 상태와 UI 상태를 분리하고 버전 충돌을 덮어쓰지 않는다.
-11. **좋아 보인다는 이유만으로 추가하지 않는다.** 새 라이브러리/컴포넌트/상태 계층/페이지는 어떤 실제 사용자 문제를 해결하는지 PR에 기록한다.
+1. **사실을 지어내지 않는다.** 직접 플레이로 확인하지 않은 Switch 2판 용어·조건·동선은 검증 완료로 표기하지 않는다.
+2. **디자인은 당근 SEED Design(라이트 톤) + 자체 젤다 이미지셋.** SEED 기본 컴포넌트·토큰을 우선 사용하고 중복 래퍼나 임의 다크 테마를 만들지 않는다. 외부 저작권 이미지·공략 문장 복제 금지.
+3. **로그인은 개인정보 없는 자유 아이디 방식.** 이메일·전화번호·비밀번호·JWT를 수집하지 않는다. `localStorage`에 아이디를 저장해 로그인을 유지하고, 서버 동기화는 공유 Supabase 프로젝트의 **`zhp_` 접두사 테이블**(`zhp_adventures`)만 사용한다.
+4. **보안과 환경변수.** `service_role` 키는 절대 사용하지 않는다. 실제 키는 `.env.local`에만 두고 커밋·로그에 남기지 않는다.
+5. **과잉 설계 금지.** `useState` 우선, 불필요한 상태 라이브러리(Jotai/Zustand)나 범용 래퍼(`Base*`/`Generic*`) 금지. 기능별 목업 HTML(`mockups/`)로 먼저 확인하고 실제 앱에 옮긴다.
 
-## 공략 작성 프로세스
+## 개발 명령
 
-앱의 참고 공략 링크는 GameWith로 통일한다. 여러 사이트의 교차조사 근거는 `sourceIds`와 조사 문서에 보존하고 읽기 링크(`guideSourceId`)와 혼동하지 않는다. 현재 루트의 최단시간은 미입증이다. 2026-11-16 조사 결과는 `docs/research/07-route-speed-audit.md` 참조.
-
-출처 등록 → 사실 단위 교차 확인 → 추천 루트 후보 비교(이유와 위험 기록) → 독자 문장/힌트 작성 → 직접 플레이로 검수 → 검증 상태 승격. `@nintaku_chick`는 사용자가 추천한 조사 후보일 뿐 개별 영상/타임스탬프를 임의 작성하지 않는다.
-
-## 개발 명령과 코드 위치
-
-- Node 24, npm. `npm ci`, `npm run dev`, `npm run check`, `npm run build`, `npm run test:e2e`.
-- 앱: `src/app`; 고유 UI: `src/components`; 순수 로직/저장: `src/lib`.
-- 공략: `content/ocarina-of-time/index.ts`, 본문 `story.ts`, 힌트 `puzzles.ts`, 출처 `sources.ts`. 현재 30역/31문제의 출처 기반 초안이며 직접 플레이 검증으로 오인하지 않는다. 조사 근거·판본·검증 상태를 갖춘 데이터만 추가하고 가상 데이터는 테스트 파일 안에서만 사용한다.
-- 라이브러리 설정/API는 Context7의 resolve-library-id → query-docs 순으로 최신 공식 문서를 확인한다. Next.js 설치판 문서는 `node_modules/next/dist/docs`에도 있다.
-- 현재 실행에 환경변수가 필요하지 않다. 키/쿠키/이메일을 로그에 남기지 않는다. 원격 프로젝트 생성·비용 발생·기존 데이터 삭제는 사용자 판단을 받는다.
+- Node 24, npm: `npm ci`, `npm run dev`, `npm run check`, `npm run build`
+- 목업 HTML: `mockups/index.html`
+- 이미지셋: `public/assets/zelda/`
+- Supabase SQL: `supabase/schema.sql` (`zhp_` prefix 필수)
 
 ## 자동 커밋 규칙
 
-- 사용자가 자동 커밋을 요청했다. 의미 있는 작업 단위를 완료하고 관련 검증을 통과하면 별도 확인 없이 로컬 커밋한다.
-- 형식은 `feat(scope): 한글 메시지`, `fix(scope): 한글 메시지`, `chore(scope): 한글 메시지`만 허용한다. scope는 `content`, `route`, `auth`, `docs`, `project`처럼 변경 대상을 짧게 표현한다.
-- 기능·콘텐츠 추가는 `feat`, 오류 수정은 `fix`, 설정·문서·유지보수는 `chore`를 사용한다. 제목과 필요한 본문은 한국어로 작성한다.
-- 커밋 전 스테이징 내용을 검토하고 환경변수 실제 값, 개인 백업, 빌드 결과, node_modules를 포함하지 않는다.
-- 기존 커밋을 임의로 amend/rebase하거나 다른 작업자의 변경을 되돌리지 않는다. 원격 push는 사용자 요청이 있을 때 진행한다.
-- 예시: `feat(content): 초반 장비 준비 공략 초안 추가`.
-
-## 작업 완료 조건
-
-- 관련 콘텐츠 출처·판본·검증 정도가 남아 있고 미검증을 숨기지 않는다.
-- 타입검사/린트/실제 관련 테스트 통과. 모바일 360/390px, 긴 한국어, 저장 복구, 키보드/스크린리더, 스포일러 누출 검사.
-- 실측 근거 없이 '최단 보장', '30분 절약' 등의 홍보 문구를 사용하지 않는다.
-- 사용자 합의 변경이면 관련 모든 문서/ADR/코드의 충돌을 함께 수정한다.
+- 의미 있는 작업 단위를 완료하고 `npm run check`와 `npm run build`를 통과하면 로컬 커밋한다.
+- 형식은 `feat(scope): 한글 메시지`, `fix(scope): 한글 메시지`, `chore(scope): 한글 메시지`만 사용한다.
+- `.env.local`, 실제 키, 빌드 결과, `node_modules`를 스테이징하지 않는다. 원격 push는 사용자 요청 시에만 진행한다.
 
 <!-- BEGIN:nextjs-agent-rules -->
 
