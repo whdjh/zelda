@@ -7,8 +7,9 @@
 1. **코드·문서 초경량 리셋**: 미검증 30역 노선 코드와 35개 문서를 정리하고 이전 작업본은 Git 이력에 보존.
 2. **디자인 & 아이콘셋**: 당근 SEED 컴포넌트 구조 + 시간의 오카리나 색상 토큰 + 3D 아이콘 5종 통일.
 3. **기능별 목업 HTML (`mockups/`)**: 4개 화면 시안 작성.
-4. **백엔드 주도 엔진 + 초경량 프론트**:
-   - 카드·셔플·3단계 힌트 원본을 서버 전용 모듈(`src/server/adventure-engine.ts`, `src/server/oot-catalog.ts`)로 완전 격리해 클라이언트 번들과 응답에 미공개 힌트가 포함되지 않음.
+4. **Supabase DB 주도 백엔드 엔진 + 초경량 프론트**:
+   - 카드·힌트 원본을 Supabase 테이블(`public.zhp_cards`, `public.zhp_hints`)로 이전하고 Next.js API Route(`src/app/api/adventure/*`)가 실시간 조회·필터링해 현재 카드와 공개된 힌트만 내려줌.
+   - 오프라인·테이블 미생성 환경에서는 서버 전용 폴백 시드(`src/server/oot-catalog.ts`)로 동작하며 클라이언트 번들에는 카드·힌트 원본이 전혀 포함되지 않음.
    - `localStorage`에는 자유 아이디만 유지하고 진행도는 `zhp_adventures` 기준 서버 저장.
    - 로그인 정보는 우상단 플로팅 버튼 + SEED 바텀시트로 축소.
 5. **초반 선형 진행 + 첫 3갈래 증강 카드 (안 A, Switch 2 리메이크 변경점 반영)**:
@@ -18,5 +19,5 @@
 
 ## 다음 단계
 
-1. 데크나무 → 하이랄 성 → 첫 3갈래까지 Switch 2판 직접 플레이로 동선·용어·힌트 검증 및 수정.
-2. Supabase SQL Editor에서 [`supabase/schema.sql`](../supabase/schema.sql) 1회 실행 후 `zhp_adventures` 실연동 확인.
+1. Supabase SQL Editor에서 [`supabase/schema.sql`](../supabase/schema.sql) 1회 실행해 `zhp_adventures`, `zhp_cards`, `zhp_hints` 생성 및 초기 시드 반영 확인.
+2. 데크나무 → 하이랄 성 → 첫 3갈래까지 Switch 2판 직접 플레이로 동선·용어·힌트 검증 및 수정.

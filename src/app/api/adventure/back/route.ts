@@ -2,7 +2,11 @@ import type { NextRequest } from "next/server";
 import type { AdventurePayload, GoBackRequest } from "@/api/types";
 import { validateAdventureId } from "@/lib/adventure-id";
 import { applyGoBack, buildAdventureView } from "@/server/adventure-engine";
-import { readAdventureState, writeAdventureState } from "@/server/adventure-store";
+import {
+  readAdventureCatalog,
+  readAdventureState,
+  writeAdventureState,
+} from "@/server/adventure-store";
 import { apiFail, apiOk } from "@/server/api-response";
 
 export async function POST(request: NextRequest) {
@@ -16,12 +20,13 @@ export async function POST(request: NextRequest) {
   const checked = validateAdventureId(body.adventureId ?? "");
   if (!checked.ok) return apiFail(checked.code, 400);
 
-  const current = await readAdventureState(checked.value);
+  const catalog = await readAdventureCatalog("oot");
+  const current = await readAdventureState(checked.value, catalog);
   const next = applyGoBack(current);
-  await writeAdventureState(checked.value, next);
+  await writeAdventureState(checked.value, next, catalog);
 
   return apiOk<AdventurePayload>({
     adventureId: checked.value,
-    view: buildAdventureView(next),
+    view: buildAdventureView(next, catalog),
   });
 }

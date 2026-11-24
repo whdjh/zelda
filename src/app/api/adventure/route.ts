@@ -2,7 +2,7 @@ import type { NextRequest } from "next/server";
 import type { AdventurePayload } from "@/api/types";
 import { validateAdventureId } from "@/lib/adventure-id";
 import { buildAdventureView } from "@/server/adventure-engine";
-import { readAdventureState } from "@/server/adventure-store";
+import { readAdventureCatalog, readAdventureState } from "@/server/adventure-store";
 import { apiFail, apiOk } from "@/server/api-response";
 
 export async function GET(request: NextRequest) {
@@ -10,9 +10,10 @@ export async function GET(request: NextRequest) {
   const checked = validateAdventureId(rawId);
   if (!checked.ok) return apiFail(checked.code, 400);
 
-  const state = await readAdventureState(checked.value);
+  const catalog = await readAdventureCatalog("oot");
+  const state = await readAdventureState(checked.value, catalog);
   return apiOk<AdventurePayload>({
     adventureId: checked.value,
-    view: buildAdventureView(state),
+    view: buildAdventureView(state, catalog),
   });
 }

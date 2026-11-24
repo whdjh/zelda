@@ -1,110 +1,68 @@
 import { getMessages } from "../i18n/index.ts";
-import { OOT_CARD_COPY, OOT_HINTS } from "./oot-catalog.ts";
 import type {
   AdventureView,
+  CardId,
   ChoiceCardView,
   GameId,
   HintRevealMode,
-  OotCardId,
-  OotHintId,
   RevealedHintView,
 } from "../api/types.ts";
-
-export interface ServerCardDefinition {
-  id: OotCardId;
-  icon: string;
-  referenceUrl: string;
-  hintIds: readonly OotHintId[];
-  nextCardIds: readonly OotCardId[];
-}
+import { DEFAULT_OOT_CATALOG, type AdventureCatalog } from "./oot-catalog.ts";
 
 export interface AdventureState {
   gameId: GameId;
-  currentCardId: OotCardId;
-  selectedHistory: OotCardId[];
+  currentCardId: CardId;
+  selectedHistory: CardId[];
   revealedHints: string[];
 }
 
-export const INITIAL_OOT_CARD_ID: OotCardId = "kokiri-gear";
-
-export const OOT_CARDS: Record<OotCardId, ServerCardDefinition> = {
-  "kokiri-gear": {
-    id: "kokiri-gear",
-    icon: "/assets/zelda/sword-shield.png",
-    referenceUrl: "https://gamewith.jp/zelda-tokino-ocarina/563396",
-    hintIds: ["kokiri-gear-1", "kokiri-gear-2", "kokiri-gear-3"],
-    nextCardIds: ["deku-tree"],
-  },
-  "deku-tree": {
-    id: "deku-tree",
-    icon: "/assets/zelda/adventure-emblem.png",
-    referenceUrl: "https://gamewith.jp/zelda-tokino-ocarina/563395",
-    hintIds: ["deku-tree-1", "deku-tree-2", "deku-tree-3"],
-    nextCardIds: ["hyrule-castle"],
-  },
-  "hyrule-castle": {
-    id: "hyrule-castle",
-    icon: "/assets/zelda/adventure-emblem.png",
-    referenceUrl: "https://gamewith.jp/zelda-tokino-ocarina/563310",
-    hintIds: ["hyrule-castle-1", "hyrule-castle-2", "hyrule-castle-3"],
-    nextCardIds: ["goron-main", "kakariko-prep", "songs-route"],
-  },
-  "goron-main": {
-    id: "goron-main",
-    icon: "/assets/zelda/sword-shield.png",
-    referenceUrl: "https://gamewith.jp/zelda-tokino-ocarina/563393",
-    hintIds: [],
-    nextCardIds: [],
-  },
-  "kakariko-prep": {
-    id: "kakariko-prep",
-    icon: "/assets/zelda/fairy-bottle.png",
-    referenceUrl: "https://gamewith.jp/zelda-tokino-ocarina/563393",
-    hintIds: ["kakariko-prep-1", "kakariko-prep-2", "kakariko-prep-3"],
-    nextCardIds: [],
-  },
-  "songs-route": {
-    id: "songs-route",
-    icon: "/assets/zelda/ocarina.png",
-    referenceUrl: "https://gamewith.jp/zelda-tokino-ocarina/563310",
-    hintIds: ["songs-route-1", "songs-route-2", "songs-route-3"],
-    nextCardIds: [],
-  },
-};
-
-export function isOotCardId(value: unknown): value is OotCardId {
-  return typeof value === "string" && value in OOT_CARDS;
+export function isValidCardId(
+  value: unknown,
+  catalog: AdventureCatalog = DEFAULT_OOT_CATALOG,
+): value is CardId {
+  return typeof value === "string" && value in catalog.cards;
 }
 
-export function createInitialState(): AdventureState {
+export function createInitialState(
+  catalog: AdventureCatalog = DEFAULT_OOT_CATALOG,
+): AdventureState {
   return {
-    gameId: "oot",
-    currentCardId: INITIAL_OOT_CARD_ID,
+    gameId: catalog.gameId,
+    currentCardId: catalog.initialCardId,
     selectedHistory: [],
     revealedHints: [],
   };
 }
 
-export function sanitizeState(input: Partial<AdventureState> | null | undefined): AdventureState {
-  if (!input) return createInitialState();
-  const currentCardId = isOotCardId(input.currentCardId) ? input.currentCardId : INITIAL_OOT_CARD_ID;
+export function sanitizeState(
+  input: Partial<AdventureState> | null | undefined,
+  catalog: AdventureCatalog = DEFAULT_OOT_CATALOG,
+): AdventureState {
+  if (!input) return createInitialState(catalog);
+  const currentCardId = isValidCardId(input.currentCardId, catalog)
+    ? input.currentCardId
+    : catalog.initialCardId;
   const selectedHistory = Array.isArray(input.selectedHistory)
-    ? input.selectedHistory.filter(isOotCardId)
+    ? input.selectedHistory.filter((item): item is CardId => isValidCardId(item, catalog))
     : [];
   const revealedHints = Array.isArray(input.revealedHints)
     ? [...new Set(input.revealedHints.filter((item): item is string => typeof item === "string"))]
     : [];
   return {
-    gameId: "oot",
+    gameId: catalog.gameId,
     currentCardId,
     selectedHistory,
     revealedHints,
   };
 }
 
-export function applySelectNext(state: AdventureState, nextCardId: string): AdventureState {
-  const current = OOT_CARDS[state.currentCardId];
-  if (!isOotCardId(nextCardId) || !current.nextCardIds.includes(nextCardId)) {
+export function applySelectNext(
+  state: AdventureState,
+  nextCardId: string,
+  catalog: AdventureCatalog = DEFAULT_OOT_CATALOG,
+): AdventureState {
+  const current = catalog.cards[state.currentCardId];
+  if (!current || !isValidCardId(nextCardId, catalog) || !current.nextCardIds.includes(nextCardId)) {
     return state;
   }
   return {
@@ -124,16 +82,21 @@ export function applyGoBack(state: AdventureState): AdventureState {
   };
 }
 
-export function applyRevealHint(state: AdventureState, mode: HintRevealMode): AdventureState {
-  const current = OOT_CARDS[state.currentCardId];
-  if (!current.hintIds.length) return state;
+export function applyRevealHint(
+  state: AdventureState,
+  mode: HintRevealMode,
+  catalog: AdventureCatalog = DEFAULT_OOT_CATALOG,
+): AdventureState {
+  const current = catalog.cards[state.currentCardId];
+  if (!current || !current.hints.length) return state;
+  const hintIds = current.hints.map((hint) => hint.id);
   if (mode === "all") {
     return {
       ...state,
-      revealedHints: [...new Set([...state.revealedHints, ...current.hintIds])],
+      revealedHints: [...new Set([...state.revealedHints, ...hintIds])],
     };
   }
-  const nextHint = current.hintIds.find((id) => !state.revealedHints.includes(id));
+  const nextHint = hintIds.find((id) => !state.revealedHints.includes(id));
   if (!nextHint) return state;
   return {
     ...state,
@@ -141,50 +104,52 @@ export function applyRevealHint(state: AdventureState, mode: HintRevealMode): Ad
   };
 }
 
-export function buildAdventureView(state: AdventureState): AdventureView {
+export function buildAdventureView(
+  state: AdventureState,
+  catalog: AdventureCatalog = DEFAULT_OOT_CATALOG,
+): AdventureView {
   const t = getMessages();
-  const card = OOT_CARDS[state.currentCardId];
-  const copy = OOT_CARD_COPY[card.id];
+  const card = catalog.cards[state.currentCardId] ?? catalog.cards[catalog.initialCardId];
 
-  const revealedHints: RevealedHintView[] = card.hintIds
-    .filter((id) => state.revealedHints.includes(id))
-    .map((id, index) => {
-      const level = (index + 1) as 1 | 2 | 3;
+  const revealedHints: RevealedHintView[] = card.hints
+    .filter((hint) => state.revealedHints.includes(hint.id))
+    .map((hint) => ({
+      id: hint.id,
+      level: hint.level,
+      label: t.guide.hintLevels[hint.level],
+      text: hint.text,
+      isSolution: hint.level === 3,
+    }));
+
+  const hasMoreHints = revealedHints.length < card.hints.length;
+  const nextHintLevel = hasMoreHints
+    ? (card.hints.find((hint) => !state.revealedHints.includes(hint.id))?.level ?? null)
+    : null;
+
+  const nextChoices: ChoiceCardView[] = card.nextCardIds
+    .filter((nextId) => nextId in catalog.cards)
+    .map((nextId) => {
+      const nextCard = catalog.cards[nextId];
       return {
-        id,
-        level,
-        label: t.guide.hintLevels[level],
-        text: OOT_HINTS[id],
-        isSolution: level === 3,
+        id: nextCard.id,
+        badge: nextCard.stepLabel,
+        icon: nextCard.icon,
+        title: nextCard.title,
+        description: nextCard.steps[0] ?? "",
       };
     });
-
-  const hasMoreHints = revealedHints.length < card.hintIds.length;
-  const nextHintLevel = hasMoreHints ? ((revealedHints.length + 1) as 1 | 2 | 3) : null;
-
-  const nextChoices: ChoiceCardView[] = card.nextCardIds.map((nextId) => {
-    const nextDef = OOT_CARDS[nextId];
-    const nextCopy = OOT_CARD_COPY[nextId];
-    return {
-      id: nextId,
-      badge: nextCopy.stepLabel,
-      icon: nextDef.icon,
-      title: nextCopy.title,
-      description: nextCopy.steps[0] ?? "",
-    };
-  });
 
   return {
     gameId: state.gameId,
     card: {
       id: card.id,
-      stepLabel: copy.stepLabel,
+      stepLabel: card.stepLabel,
       icon: card.icon,
-      title: copy.title,
-      steps: copy.steps,
+      title: card.title,
+      steps: card.steps,
       referenceUrl: card.referenceUrl,
-      hintQuestion: copy.hintQuestion,
-      totalHints: card.hintIds.length,
+      hintQuestion: card.hintQuestion,
+      totalHints: card.hints.length,
       revealedHints,
       hasMoreHints,
       nextHintLevel,

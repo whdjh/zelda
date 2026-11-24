@@ -1,23 +1,129 @@
 import "server-only";
-import { ADVENTURES_TABLE, createSupabaseClient, type AdventureRow } from "@/lib/supabase";
+import type { GameId } from "@/api/types";
+import {
+  ADVENTURES_TABLE,
+  CARDS_TABLE,
+  createSupabaseClient,
+  HINTS_TABLE,
+  type AdventureRow,
+  type CardRow,
+  type HintRow,
+} from "@/lib/supabase";
 import {
   createInitialState,
   sanitizeState,
   type AdventureState,
 } from "@/server/adventure-engine";
+import {
+  DEFAULT_OOT_CATALOG,
+  type AdventureCatalog,
+  type CatalogCard,
+  type CatalogHint,
+} from "@/server/oot-catalog";
 
 // Supabase 테이블 미생성/오프라인 로컬 개발 시 서버 메모리 폴백
 const fallbackStore = new Map<string, AdventureState>();
 
-function rowToState(row: AdventureRow): AdventureState {
-  return sanitizeState({
-    currentCardId: row.current_card_id as AdventureState["currentCardId"],
-    selectedHistory: row.selected_history as AdventureState["selectedHistory"],
-    revealedHints: row.revealed_hints,
-  });
+function isValidLevel(value: unknown): value is 1 | 2 | 3 {
+  return value === 1 || value === 2 || value === 3;
 }
 
-export async function readAdventureState(adventureId: string): Promise<AdventureState> {
+function buildCatalogFromRows(
+  gameId: GameId,
+  cardRows: CardRow[],
+  hintRows: HintRow[],
+): AdventureCatalog | null {
+  if (!cardRows.length) return null;
+
+  const hintsByCard = new Map<string, CatalogHint[]>();
+  for (const row of hintRows) {
+    if (!isValidLevel(row.level)) continue;
+    const list = hintsByCard.get(row.card_id) ?? [];
+    list.push({ id: row.hint_id, level: row.level, text: row.text });
+    hintsByCard.set(row.card_id, list);
+  }
+
+  const cards: Record<string, CatalogCard> = {};
+  let initialCardId: string | null = null;
+
+  for (const row of cardRows) {
+    if (row.is_initial && !initialCardId) {
+      initialCardId = row.card_id;
+    }
+    const hints = (hintsByCard.get(row.card_id) ?? []).sort((a, b) => a.level - b.level);
+    cards[row.card_id] = {
+      id: row.card_id,
+      stepLabel: row.step_label,
+      title: row.title,
+      icon: row.icon,
+      steps: Array.isArray(row.steps)
+        ? row.steps.filter((s): s is string => typeof s === "string")
+        : [],
+      referenceUrl: row.reference_url,
+      hintQuestion: row.hint_question ?? "",
+      hints,
+      nextCardIds: Array.isArray(row.next_card_ids)
+        ? row.next_card_ids.filter((id): id is string => typeof id === "string")
+        : [],
+    };
+  }
+
+  const resolvedInitial = initialCardId ?? cardRows[0]?.card_id;
+  if (!resolvedInitial || !(resolvedInitial in cards)) return null;
+
+  return {
+    gameId,
+    initialCardId: resolvedInitial,
+    cards,
+  };
+}
+
+export async function readAdventureCatalog(gameId: GameId = "oot"): Promise<AdventureCatalog> {
+  const supabase = createSupabaseClient();
+  if (!supabase) return DEFAULT_OOT_CATALOG;
+
+  const [cardsResult, hintsResult] = await Promise.all([
+    supabase
+      .from(CARDS_TABLE)
+      .select(
+        "game_id, card_id, is_initial, step_label, title, icon, steps, reference_url, hint_question, next_card_ids, sort_order",
+      )
+      .eq("game_id", gameId)
+      .order("sort_order", { ascending: true }),
+    supabase
+      .from(HINTS_TABLE)
+      .select("game_id, hint_id, card_id, level, text")
+      .eq("game_id", gameId)
+      .order("level", { ascending: true }),
+  ]);
+
+  if (cardsResult.error || hintsResult.error) {
+    return DEFAULT_OOT_CATALOG;
+  }
+
+  const catalog = buildCatalogFromRows(
+    gameId,
+    (cardsResult.data ?? []) as CardRow[],
+    (hintsResult.data ?? []) as HintRow[],
+  );
+  return catalog ?? DEFAULT_OOT_CATALOG;
+}
+
+function rowToState(row: AdventureRow, catalog: AdventureCatalog): AdventureState {
+  return sanitizeState(
+    {
+      currentCardId: row.current_card_id ?? undefined,
+      selectedHistory: row.selected_history,
+      revealedHints: row.revealed_hints,
+    },
+    catalog,
+  );
+}
+
+export async function readAdventureState(
+  adventureId: string,
+  catalog: AdventureCatalog = DEFAULT_OOT_CATALOG,
+): Promise<AdventureState> {
   const supabase = createSupabaseClient();
   if (supabase) {
     const { data, error } = await supabase
@@ -28,25 +134,29 @@ export async function readAdventureState(adventureId: string): Promise<Adventure
 
     if (!error) {
       if (data) {
-        const state = rowToState(data);
+        const state = rowToState(data, catalog);
         fallbackStore.set(adventureId, state);
         return state;
       }
-      const initial = createInitialState();
-      await writeAdventureState(adventureId, initial);
+      const initial = createInitialState(catalog);
+      await writeAdventureState(adventureId, initial, catalog);
       return initial;
     }
   }
 
   const cached = fallbackStore.get(adventureId);
-  if (cached) return cached;
-  const initial = createInitialState();
+  if (cached) return sanitizeState(cached, catalog);
+  const initial = createInitialState(catalog);
   fallbackStore.set(adventureId, initial);
   return initial;
 }
 
-export async function writeAdventureState(adventureId: string, state: AdventureState): Promise<void> {
-  const clean = sanitizeState(state);
+export async function writeAdventureState(
+  adventureId: string,
+  state: AdventureState,
+  catalog: AdventureCatalog = DEFAULT_OOT_CATALOG,
+): Promise<void> {
+  const clean = sanitizeState(state, catalog);
   fallbackStore.set(adventureId, clean);
 
   const supabase = createSupabaseClient();

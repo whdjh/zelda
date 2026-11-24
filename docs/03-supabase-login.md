@@ -17,6 +17,10 @@
 
 ## 3. 공유 Supabase 프로젝트 & `zhp_` 접두사
 
-- 테이블명: `public.zhp_adventures`
-- SQL 위치: [`supabase/schema.sql`](../supabase/schema.sql)
+- 테이블 목록:
+  - `public.zhp_adventures`: 유저 모험 진행도 (`current_card_id`, `selected_history`, `revealed_hints`)
+  - `public.zhp_cards`: 게임별 증강 카드 원본 카탈로그 (읽기 전용 RLS)
+  - `public.zhp_hints`: 카드별 3단계 퍼즐 힌트 원본 (읽기 전용 RLS)
+- SQL 위치: [`supabase/schema.sql`](../supabase/schema.sql) (테이블 생성 + 초기 시드 `upsert` 포함)
 - `.env.example`을 복사해 `.env.local`에 `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`만 입력합니다. (`service_role` 키 금지)
+- Supabase 테이블 미생성·오프라인 환경에서는 서버 폴백 시드([`src/server/oot-catalog.ts`](../src/server/oot-catalog.ts))로 자동 동작합니다.
