@@ -7,12 +7,20 @@ import type {
   HintRevealMode,
   RevealedHintView,
 } from "../api/types.ts";
-import { DEFAULT_OOT_CATALOG, type AdventureCatalog } from "./oot-catalog.ts";
+import {
+  DEFAULT_OOT_CATALOG,
+  type AdventureCatalog,
+  type CatalogCard,
+} from "./oot-catalog.ts";
+
+const PRIORITY_BOOST_BONUS = 30;
+const MAX_RECOMMENDED_CHOICES = 3;
 
 export interface AdventureState {
   gameId: GameId;
   currentCardId: CardId;
   selectedHistory: CardId[];
+  completedCards: CardId[];
   revealedHints: string[];
 }
 
@@ -30,6 +38,7 @@ export function createInitialState(
     gameId: catalog.gameId,
     currentCardId: catalog.initialCardId,
     selectedHistory: [],
+    completedCards: [],
     revealedHints: [],
   };
 }
@@ -45,6 +54,18 @@ export function sanitizeState(
   const selectedHistory = Array.isArray(input.selectedHistory)
     ? input.selectedHistory.filter((item): item is CardId => isValidCardId(item, catalog))
     : [];
+  // 이전 스키마(completedCards 없음)에서 복원 시 selectedHistory를 완료 카드로 승계
+  const rawCompleted =
+    Array.isArray(input.completedCards) && input.completedCards.length > 0
+      ? input.completedCards
+      : selectedHistory;
+  const completedCards = [
+    ...new Set(
+      rawCompleted.filter(
+        (item): item is CardId => isValidCardId(item, catalog) && item !== currentCardId,
+      ),
+    ),
+  ];
   const revealedHints = Array.isArray(input.revealedHints)
     ? [...new Set(input.revealedHints.filter((item): item is string => typeof item === "string"))]
     : [];
@@ -52,8 +73,74 @@ export function sanitizeState(
     gameId: catalog.gameId,
     currentCardId,
     selectedHistory,
+    completedCards,
     revealedHints,
   };
+}
+
+function collectUnlockedFlags(
+  completedCardIds: Iterable<CardId>,
+  catalog: AdventureCatalog,
+): Set<string> {
+  const flags = new Set<string>();
+  for (const cardId of completedCardIds) {
+    const card = catalog.cards[cardId];
+    if (!card) continue;
+    for (const flag of card.grantsFlags) {
+      flags.add(flag);
+    }
+  }
+  return flags;
+}
+
+function computeCardScore(card: CatalogCard, unlockedFlags: Set<string>): number {
+  const boosted =
+    card.boostWhenFlags.length > 0 &&
+    card.boostWhenFlags.every((flag) => unlockedFlags.has(flag));
+  return card.priority + (boosted ? PRIORITY_BOOST_BONUS : 0);
+}
+
+export function getEligibleNextCards(
+  state: AdventureState,
+  catalog: AdventureCatalog = DEFAULT_OOT_CATALOG,
+): CatalogCard[] {
+  const prospectiveCompleted = new Set<CardId>([...state.completedCards, state.currentCardId]);
+  const prospectiveFlags = collectUnlockedFlags(prospectiveCompleted, catalog);
+
+  return Object.values(catalog.cards)
+    .filter((card) => {
+      if (prospectiveCompleted.has(card.id)) return false;
+      return card.requiresFlags.every((flag) => prospectiveFlags.has(flag));
+    })
+    .sort((a, b) => {
+      const scoreDiff =
+        computeCardScore(b, prospectiveFlags) - computeCardScore(a, prospectiveFlags);
+      if (scoreDiff !== 0) return scoreDiff;
+      return a.sortOrder - b.sortOrder;
+    });
+}
+
+export function selectRecommendedNextCards(
+  state: AdventureState,
+  catalog: AdventureCatalog = DEFAULT_OOT_CATALOG,
+  maxChoices: number = MAX_RECOMMENDED_CHOICES,
+): CatalogCard[] {
+  const eligible = getEligibleNextCards(state, catalog);
+  if (!eligible.length) return [];
+
+  const picked: CatalogCard[] = [];
+  const topMain = eligible.find((card) => card.category === "main");
+  if (topMain) {
+    picked.push(topMain);
+  }
+
+  for (const card of eligible) {
+    if (picked.length >= maxChoices) break;
+    if (picked.some((existing) => existing.id === card.id)) continue;
+    picked.push(card);
+  }
+
+  return picked;
 }
 
 export function applySelectNext(
@@ -61,14 +148,16 @@ export function applySelectNext(
   nextCardId: string,
   catalog: AdventureCatalog = DEFAULT_OOT_CATALOG,
 ): AdventureState {
-  const current = catalog.cards[state.currentCardId];
-  if (!current || !isValidCardId(nextCardId, catalog) || !current.nextCardIds.includes(nextCardId)) {
+  if (!isValidCardId(nextCardId, catalog)) return state;
+  const eligibleIds = new Set(getEligibleNextCards(state, catalog).map((card) => card.id));
+  if (!eligibleIds.has(nextCardId)) {
     return state;
   }
   return {
     ...state,
     currentCardId: nextCardId,
     selectedHistory: [...state.selectedHistory, state.currentCardId],
+    completedCards: [...new Set([...state.completedCards, state.currentCardId])],
   };
 }
 
@@ -79,6 +168,7 @@ export function applyGoBack(state: AdventureState): AdventureState {
     ...state,
     currentCardId: prev,
     selectedHistory: state.selectedHistory.slice(0, -1),
+    completedCards: state.completedCards.filter((id) => id !== prev),
   };
 }
 
@@ -126,18 +216,16 @@ export function buildAdventureView(
     ? (card.hints.find((hint) => !state.revealedHints.includes(hint.id))?.level ?? null)
     : null;
 
-  const nextChoices: ChoiceCardView[] = card.nextCardIds
-    .filter((nextId) => nextId in catalog.cards)
-    .map((nextId) => {
-      const nextCard = catalog.cards[nextId];
-      return {
-        id: nextCard.id,
-        badge: nextCard.stepLabel,
-        icon: nextCard.icon,
-        title: nextCard.title,
-        description: nextCard.steps[0] ?? "",
-      };
-    });
+  const nextChoices: ChoiceCardView[] = selectRecommendedNextCards(state, catalog).map(
+    (nextCard) => ({
+      id: nextCard.id,
+      category: nextCard.category,
+      badge: nextCard.stepLabel,
+      icon: nextCard.icon,
+      title: nextCard.title,
+      description: nextCard.steps[0] ?? "",
+    }),
+  );
 
   return {
     gameId: state.gameId,

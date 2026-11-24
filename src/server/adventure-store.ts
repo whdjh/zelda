@@ -1,5 +1,5 @@
 import "server-only";
-import type { GameId } from "@/api/types";
+import type { CardCategory, GameId } from "@/api/types";
 import {
   ADVENTURES_TABLE,
   CARDS_TABLE,
@@ -28,6 +28,15 @@ function isValidLevel(value: unknown): value is 1 | 2 | 3 {
   return value === 1 || value === 2 || value === 3;
 }
 
+function normalizeCategory(value: unknown): CardCategory {
+  if (value === "main" || value === "safety" || value === "utility") return value;
+  return "main";
+}
+
+function normalizeStringArray(value: unknown): string[] {
+  return Array.isArray(value) ? value.filter((item): item is string => typeof item === "string") : [];
+}
+
 function buildCatalogFromRows(
   gameId: GameId,
   cardRows: CardRow[],
@@ -53,18 +62,19 @@ function buildCatalogFromRows(
     const hints = (hintsByCard.get(row.card_id) ?? []).sort((a, b) => a.level - b.level);
     cards[row.card_id] = {
       id: row.card_id,
+      category: normalizeCategory(row.category),
       stepLabel: row.step_label,
       title: row.title,
       icon: row.icon,
-      steps: Array.isArray(row.steps)
-        ? row.steps.filter((s): s is string => typeof s === "string")
-        : [],
+      steps: normalizeStringArray(row.steps),
       referenceUrl: row.reference_url,
       hintQuestion: row.hint_question ?? "",
       hints,
-      nextCardIds: Array.isArray(row.next_card_ids)
-        ? row.next_card_ids.filter((id): id is string => typeof id === "string")
-        : [],
+      requiresFlags: normalizeStringArray(row.requires_flags),
+      grantsFlags: normalizeStringArray(row.grants_flags),
+      priority: typeof row.priority === "number" ? row.priority : 50,
+      boostWhenFlags: normalizeStringArray(row.boost_when_flags),
+      sortOrder: typeof row.sort_order === "number" ? row.sort_order : 0,
     };
   }
 
@@ -86,7 +96,7 @@ export async function readAdventureCatalog(gameId: GameId = "oot"): Promise<Adve
     supabase
       .from(CARDS_TABLE)
       .select(
-        "game_id, card_id, is_initial, step_label, title, icon, steps, reference_url, hint_question, next_card_ids, sort_order",
+        "game_id, card_id, is_initial, category, step_label, title, icon, steps, reference_url, hint_question, requires_flags, grants_flags, priority, boost_when_flags, sort_order",
       )
       .eq("game_id", gameId)
       .order("sort_order", { ascending: true }),
@@ -114,6 +124,7 @@ function rowToState(row: AdventureRow, catalog: AdventureCatalog): AdventureStat
     {
       currentCardId: row.current_card_id ?? undefined,
       selectedHistory: row.selected_history,
+      completedCards: Array.isArray(row.completed_cards) ? row.completed_cards : undefined,
       revealedHints: row.revealed_hints,
     },
     catalog,
@@ -128,7 +139,9 @@ export async function readAdventureState(
   if (supabase) {
     const { data, error } = await supabase
       .from(ADVENTURES_TABLE)
-      .select("adventure_id, current_card_id, selected_history, revealed_hints, updated_at")
+      .select(
+        "adventure_id, current_card_id, selected_history, completed_cards, revealed_hints, updated_at",
+      )
       .eq("adventure_id", adventureId)
       .maybeSingle<AdventureRow>();
 
@@ -166,6 +179,7 @@ export async function writeAdventureState(
     adventure_id: adventureId,
     current_card_id: clean.currentCardId,
     selected_history: clean.selectedHistory,
+    completed_cards: clean.completedCards,
     revealed_hints: clean.revealedHints,
     updated_at: new Date().toISOString(),
   });

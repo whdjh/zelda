@@ -2,6 +2,7 @@ import type { AdventureIdErrorCode } from "../lib/adventure-id.ts";
 
 export type GameId = "oot";
 export type CardId = string;
+export type CardCategory = "main" | "safety" | "utility";
 export type HintRevealMode = "next" | "all";
 
 export interface RevealedHintView {
@@ -14,6 +15,7 @@ export interface RevealedHintView {
 
 export interface ChoiceCardView {
   id: CardId;
+  category: CardCategory;
   badge: string;
   icon: string;
   title: string;

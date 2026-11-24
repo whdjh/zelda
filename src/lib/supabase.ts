@@ -10,6 +10,7 @@ export interface AdventureRow {
   adventure_id: string;
   current_card_id: string | null;
   selected_history: string[];
+  completed_cards?: string[] | null;
   revealed_hints: string[];
   updated_at: string;
 }
@@ -18,13 +19,17 @@ export interface CardRow {
   game_id: string;
   card_id: string;
   is_initial: boolean;
+  category?: string | null;
   step_label: string;
   title: string;
   icon: string;
   steps: string[];
   reference_url: string;
   hint_question: string;
-  next_card_ids: string[];
+  requires_flags?: string[] | null;
+  grants_flags?: string[] | null;
+  priority?: number | null;
+  boost_when_flags?: string[] | null;
   sort_order: number;
 }
 

@@ -353,7 +353,17 @@ export function AdventureShell() {
                     className="h-11 w-11 shrink-0 rounded-r2 object-cover"
                   />
                   <div className="min-w-0 flex-1">
-                    <span className="t1-bold text-fg-brand-contrast">{choice.badge}</span>
+                    <span
+                      className={
+                        choice.category === "safety"
+                          ? "t1-bold text-fg-warning-contrast"
+                          : choice.category === "utility"
+                            ? "t1-bold text-fg-informative"
+                            : "t1-bold text-fg-brand-contrast"
+                      }
+                    >
+                      {choice.badge}
+                    </span>
                     <p className="t4-bold text-fg-neutral">{choice.title}</p>
                     <p className="truncate t2-regular text-fg-neutral-muted">{choice.description}</p>
                   </div>
