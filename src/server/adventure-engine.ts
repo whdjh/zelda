@@ -1,4 +1,5 @@
 import { getMessages } from "../i18n/index.ts";
+import { OOT_CARD_COPY, OOT_HINTS } from "./oot-catalog.ts";
 import type {
   AdventureView,
   ChoiceCardView,
@@ -143,7 +144,7 @@ export function applyRevealHint(state: AdventureState, mode: HintRevealMode): Ad
 export function buildAdventureView(state: AdventureState): AdventureView {
   const t = getMessages();
   const card = OOT_CARDS[state.currentCardId];
-  const copy = t.cards[card.id];
+  const copy = OOT_CARD_COPY[card.id];
 
   const revealedHints: RevealedHintView[] = card.hintIds
     .filter((id) => state.revealedHints.includes(id))
@@ -153,7 +154,7 @@ export function buildAdventureView(state: AdventureState): AdventureView {
         id,
         level,
         label: t.guide.hintLevels[level],
-        text: t.hints[id],
+        text: OOT_HINTS[id],
         isSolution: level === 3,
       };
     });
@@ -163,7 +164,7 @@ export function buildAdventureView(state: AdventureState): AdventureView {
 
   const nextChoices: ChoiceCardView[] = card.nextCardIds.map((nextId) => {
     const nextDef = OOT_CARDS[nextId];
-    const nextCopy = t.cards[nextId];
+    const nextCopy = OOT_CARD_COPY[nextId];
     return {
       id: nextId,
       badge: nextCopy.stepLabel,

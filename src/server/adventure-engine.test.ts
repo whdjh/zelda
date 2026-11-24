@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { getMessages } from "../i18n/index.ts";
 import {
   applyGoBack,
   applyRevealHint,
@@ -7,6 +8,12 @@ import {
   buildAdventureView,
   createInitialState,
 } from "./adventure-engine.ts";
+
+test("백엔드 격리: 클라이언트 i18n 사전에는 카드·힌트 원본이 포함되지 않는다", () => {
+  const clientMessages = getMessages() as Record<string, unknown>;
+  assert.equal("cards" in clientMessages, false);
+  assert.equal("hints" in clientMessages, false);
+});
 
 test("서버 엔진: 미공개 힌트는 뷰모델에 포함되지 않는다", () => {
   const initial = createInitialState();
