@@ -17,6 +17,7 @@
 - `docs/02-design-system.md`
 - `docs/03-supabase-login.md`
 - `docs/04-status.md`
+- `docs/05-switch2-master-map.md`
 
 ## 절대 지킬 규칙
 

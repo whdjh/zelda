@@ -61,6 +61,11 @@ create table if not exists public.zhp_hints (
 );
 
 -- RLS: 진행도는 개인정보 없는 간편 모험 아이디 전용, 카드·힌트는 읽기 전용
+grant usage on schema public to anon, authenticated;
+grant select, insert, update on public.zhp_adventures to anon, authenticated;
+grant select on public.zhp_cards to anon, authenticated;
+grant select on public.zhp_hints to anon, authenticated;
+
 alter table public.zhp_adventures enable row level security;
 alter table public.zhp_cards enable row level security;
 alter table public.zhp_hints enable row level security;
@@ -161,7 +166,7 @@ insert into public.zhp_cards (
     '3단계',
     '하이랄 성 잠입',
     '/assets/zelda/adventure-emblem.png',
-    '["숲 출구 다리에서 요정의 오카리나를 받고 하이랄 평원 북쪽 성하마을로 갑니다.","성 앞 말론에게 신기한 알을 받아 성문을 넘고, 자고 있는 타론을 깨워 안뜰로 들어갑니다.","경비병을 피해 젤다 공주에게 편지를, 임파에게 젤다의 자장가를 배웁니다."]'::jsonb,
+    '["숲 출구 다리에서 요정의 오카리나를 받고 성하마을로 갑니다. (약국 벌레 잡기로 첫 빈 병도 챙길 수 있음)","성 앞 말론에게 신기한 알을 받아 성문을 넘고, 자고 있는 타론을 깨워 안뜰로 들어갑니다.","경비병을 피해 젤다 공주에게 편지를, 임파에게 젤다의 자장가를 배웁니다."]'::jsonb,
     'https://gamewith.jp/zelda-tokino-ocarina/563310',
     '성문이 닫혀 있어서 안으로 못 들어가요.',
     '["deku-tree-done"]'::jsonb,
@@ -195,8 +200,8 @@ insert into public.zhp_cards (
     '안전 준비',
     '카카리코 생존 · 태양의 노래',
     '/assets/zelda/fairy-bottle.png',
-    '["카카리코 마을에서 흩어진 닭 7마리를 울타리에 모아 첫 빈 병을 챙깁니다.","밤에 마을 뒤 묘지에서 꽃이 놓인 비석을 당겨 하일리아 방패를 무료로 얻습니다.","묘지 안쪽 왕가의 무덤 앞에서 젤다의 자장가를 연주해 태양의 노래를 배웁니다."]'::jsonb,
-    'https://gamewith.jp/zelda-tokino-ocarina/563393',
+    '["카카리코 마을에서 흩어진 닭 7마리를 울타리에 모아 빈 병을 챙깁니다.","밤에 마을 뒤 묘지에서 꽃이 놓인 비석을 당겨 하일리아 방패를 무료로 얻습니다. (소년기에는 웅크려 불·낙석을 막는 용도)","묘지 안쪽 왕가의 무덤 앞에서 젤다의 자장가를 연주해 태양의 노래를 배웁니다."]'::jsonb,
+    'https://gamewith.jp/zelda-tokino-ocarina/570653',
     '묘지 비석이 안 움직이거나 왕가의 무덤이 안 열려요.',
     '["zelda-lullaby"]'::jsonb,
     '["bottle-kakariko","hylian-shield","suns-song"]'::jsonb,
@@ -212,7 +217,7 @@ insert into public.zhp_cards (
     '노래 선행',
     '론론 목장 · 미혹의 숲',
     '/assets/zelda/ocarina.png',
-    '["낮에 하이랄 평원 중앙 론론 목장에서 말론에게 오카리나를 꺼내 에포나의 노래를 배웁니다.","목장 건물 안 타론의 슈퍼 닭 찾기 미니게임으로 빈 병을 하나 더 챙길 수 있습니다.","코키리 숲의 미혹의 숲에서 음악 소리와 음표를 따라 숲의 성역으로 가면 사리아의 노래를 미리 배웁니다."]'::jsonb,
+    '["낮에 하이랄 평원 중앙 론론 목장에서 말론에게 오카리나를 꺼내 에포나의 노래를 배웁니다.","목장 건물 안 타론의 슈퍼 닭 찾기 미니게임으로 빈 병을 하나 더 챙길 수 있습니다.","코키리 숲의 미혹의 숲에서 음악 소리가 커지는 통로를 따라 숲의 성역으로 가면 사리아의 노래를 미리 배웁니다."]'::jsonb,
     'https://gamewith.jp/zelda-tokino-ocarina/563310',
     '미혹의 숲에서 자꾸 입구로 돌아와요.',
     '["zelda-letter","talon-awake"]'::jsonb,
@@ -250,8 +255,8 @@ insert into public.zhp_hints (game_id, hint_id, card_id, level, text) values
   ('oot', 'kakariko-prep-1', 'kakariko-prep', 1, '묘지에서는 낮과 밤에 할 수 있는 행동이 달라요. 민가 침대로도 밤을 만들 수 있습니다.'),
   ('oot', 'kakariko-prep-2', 'kakariko-prep', 2, '방패가 숨겨진 비석은 밤에만 당길 수 있고, 왕가의 무덤 앞 바닥에는 트라이포스 문양이 있어요.'),
   ('oot', 'kakariko-prep-3', 'kakariko-prep', 3, '밤에 꽃이 놓인 비석 뒤에서 당겨 방패를 챙기고, 가장 안쪽 왕가의 무덤 문양 위에서 젤다의 자장가를 연주하세요.'),
-  ('oot', 'songs-route-1', 'songs-route', 1, '갈림길 통로 입구에 가까이 서서 배경 음악 소리와 음표 표시를 살펴보세요.'),
-  ('oot', 'songs-route-2', 'songs-route', 2, '음악 소리가 또렷하게 커지고 음표가 보이는 통로가 다음 정답 방향이에요.'),
+  ('oot', 'songs-route-1', 'songs-route', 1, '갈림길 통로 입구에 가까이 서서 배경 음악 소리가 커지는지 들어보세요.'),
+  ('oot', 'songs-route-2', 'songs-route', 2, '음악 소리가 또렷하게 커지는 통로가 다음 정답 방향이에요.'),
   ('oot', 'songs-route-3', 'songs-route', 3, '미혹의 숲 입구에서 오른쪽 → 왼쪽 → 오른쪽 → 왼쪽 → 직진 → 왼쪽 → 오른쪽 순서로 가면 숲의 성역에 도착합니다.')
 on conflict (game_id, hint_id) do update set
   card_id = excluded.card_id,

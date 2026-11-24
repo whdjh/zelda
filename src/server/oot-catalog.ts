@@ -103,7 +103,7 @@ export const DEFAULT_OOT_CATALOG: AdventureCatalog = {
       title: "하이랄 성 잠입",
       icon: "/assets/zelda/adventure-emblem.png",
       steps: [
-        "숲 출구 다리에서 요정의 오카리나를 받고 하이랄 평원 북쪽 성하마을로 갑니다.",
+        "숲 출구 다리에서 요정의 오카리나를 받고 성하마을로 갑니다. (약국 벌레 잡기로 첫 빈 병도 챙길 수 있음)",
         "성 앞 말론에게 신기한 알을 받아 성문을 넘고, 자고 있는 타론을 깨워 안뜰로 들어갑니다.",
         "경비병을 피해 젤다 공주에게 편지를, 임파에게 젤다의 자장가를 배웁니다.",
       ],
@@ -159,11 +159,11 @@ export const DEFAULT_OOT_CATALOG: AdventureCatalog = {
       title: "카카리코 생존 · 태양의 노래",
       icon: "/assets/zelda/fairy-bottle.png",
       steps: [
-        "카카리코 마을에서 흩어진 닭 7마리를 울타리에 모아 첫 빈 병을 챙깁니다.",
-        "밤에 마을 뒤 묘지에서 꽃이 놓인 비석을 당겨 하일리아 방패를 무료로 얻습니다.",
+        "카카리코 마을에서 흩어진 닭 7마리를 울타리에 모아 빈 병을 챙깁니다.",
+        "밤에 마을 뒤 묘지에서 꽃이 놓인 비석을 당겨 하일리아 방패를 무료로 얻습니다. (소년기에는 웅크려 불·낙석을 막는 용도)",
         "묘지 안쪽 왕가의 무덤 앞에서 젤다의 자장가를 연주해 태양의 노래를 배웁니다.",
       ],
-      referenceUrl: "https://gamewith.jp/zelda-tokino-ocarina/563393",
+      referenceUrl: "https://gamewith.jp/zelda-tokino-ocarina/570653",
       hintQuestion: "묘지 비석이 안 움직이거나 왕가의 무덤이 안 열려요.",
       hints: [
         {
@@ -197,7 +197,7 @@ export const DEFAULT_OOT_CATALOG: AdventureCatalog = {
       steps: [
         "낮에 하이랄 평원 중앙 론론 목장에서 말론에게 오카리나를 꺼내 에포나의 노래를 배웁니다.",
         "목장 건물 안 타론의 슈퍼 닭 찾기 미니게임으로 빈 병을 하나 더 챙길 수 있습니다.",
-        "코키리 숲의 미혹의 숲에서 음악 소리와 음표를 따라 숲의 성역으로 가면 사리아의 노래를 미리 배웁니다.",
+        "코키리 숲의 미혹의 숲에서 음악 소리가 커지는 통로를 따라 숲의 성역으로 가면 사리아의 노래를 미리 배웁니다.",
       ],
       referenceUrl: "https://gamewith.jp/zelda-tokino-ocarina/563310",
       hintQuestion: "미혹의 숲에서 자꾸 입구로 돌아와요.",
@@ -205,12 +205,12 @@ export const DEFAULT_OOT_CATALOG: AdventureCatalog = {
         {
           id: "songs-route-1",
           level: 1,
-          text: "갈림길 통로 입구에 가까이 서서 배경 음악 소리와 음표 표시를 살펴보세요.",
+          text: "갈림길 통로 입구에 가까이 서서 배경 음악 소리가 커지는지 들어보세요.",
         },
         {
           id: "songs-route-2",
           level: 2,
-          text: "음악 소리가 또렷하게 커지고 음표가 보이는 통로가 다음 정답 방향이에요.",
+          text: "음악 소리가 또렷하게 커지는 통로가 다음 정답 방향이에요.",
         },
         {
           id: "songs-route-3",

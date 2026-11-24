@@ -28,7 +28,7 @@ export function isValidCardId(
   value: unknown,
   catalog: AdventureCatalog = DEFAULT_OOT_CATALOG,
 ): value is CardId {
-  return typeof value === "string" && value in catalog.cards;
+  return typeof value === "string" && Object.hasOwn(catalog.cards, value);
 }
 
 export function createInitialState(

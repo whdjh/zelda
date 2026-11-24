@@ -23,6 +23,8 @@ import {
 
 // Supabase 테이블 미생성/오프라인 로컬 개발 시 서버 메모리 폴백
 const fallbackStore = new Map<string, AdventureState>();
+const fallbackCatalogRefs = new WeakSet<AdventureCatalog>();
+fallbackCatalogRefs.add(DEFAULT_OOT_CATALOG);
 
 function isValidLevel(value: unknown): value is 1 | 2 | 3 {
   return value === 1 || value === 2 || value === 3;
@@ -108,6 +110,10 @@ export async function readAdventureCatalog(gameId: GameId = "oot"): Promise<Adve
   ]);
 
   if (cardsResult.error || hintsResult.error) {
+    console.warn("[zhp] Supabase catalog lookup failed; using fallback catalog", {
+      cardsError: cardsResult.error?.message,
+      hintsError: hintsResult.error?.message,
+    });
     return DEFAULT_OOT_CATALOG;
   }
 
@@ -155,6 +161,11 @@ export async function readAdventureState(
       await writeAdventureState(adventureId, initial, catalog);
       return initial;
     }
+
+    console.warn("[zhp] Supabase adventure read failed; using memory fallback", {
+      adventureId,
+      error: error.message,
+    });
   }
 
   const cached = fallbackStore.get(adventureId);
@@ -175,7 +186,12 @@ export async function writeAdventureState(
   const supabase = createSupabaseClient();
   if (!supabase) return;
 
-  await supabase.from(ADVENTURES_TABLE).upsert({
+  // DB 카탈로그 조회에 실패해 폴백 카탈로그로 동작 중이면 DB 진행도 덮어쓰기 방지
+  if (fallbackCatalogRefs.has(catalog)) {
+    return;
+  }
+
+  const { error } = await supabase.from(ADVENTURES_TABLE).upsert({
     adventure_id: adventureId,
     current_card_id: clean.currentCardId,
     selected_history: clean.selectedHistory,
@@ -183,4 +199,11 @@ export async function writeAdventureState(
     revealed_hints: clean.revealedHints,
     updated_at: new Date().toISOString(),
   });
+
+  if (error) {
+    console.warn("[zhp] Supabase adventure write failed", {
+      adventureId,
+      error: error.message,
+    });
+  }
 }
