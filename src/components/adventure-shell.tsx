@@ -326,7 +326,18 @@ export function AdventureShell() {
         <div className="mt-auto pt-x4">
           {nextChoices.length > 1 ? (
             <div className="flex flex-col gap-x2">
-              <p className="t3-bold text-fg-neutral">{t.guide.chooseBranchTitle}</p>
+              <div className="flex items-center justify-between gap-x2">
+                <p className="t3-bold text-fg-neutral">{t.guide.chooseBranchTitle}</p>
+                {card.totalHints > 0 && (
+                  <ActionButton
+                    variant="neutralWeak"
+                    size="small"
+                    onClick={() => setHintOpen((open) => !open)}
+                  >
+                    {hintOpen ? t.guide.closeHint : t.guide.openHint}
+                  </ActionButton>
+                )}
+              </div>
               {nextChoices.map((choice) => (
                 <button
                   key={choice.id}

@@ -33,15 +33,44 @@ test("서버 엔진: 허용된 다음 카드로 이동 및 이전 카드 복귀"
   const invalid = applySelectNext(initial, "not-allowed");
   assert.equal(invalid.currentCardId, "kokiri-gear");
 
-  const next = applySelectNext(initial, "deku-tree");
-  assert.equal(next.currentCardId, "deku-tree");
-  assert.deepEqual(next.selectedHistory, ["kokiri-gear"]);
+  const deku = applySelectNext(initial, "deku-tree");
+  assert.equal(deku.currentCardId, "deku-tree");
+  assert.deepEqual(deku.selectedHistory, ["kokiri-gear"]);
 
-  const viewNext = buildAdventureView(next);
-  assert.equal(viewNext.canGoBack, true);
-  assert.equal(viewNext.nextChoices.length, 0);
+  const viewDeku = buildAdventureView(deku);
+  assert.equal(viewDeku.canGoBack, true);
+  assert.equal(viewDeku.card.totalHints, 3);
+  assert.equal(viewDeku.card.revealedHints.length, 0);
+  assert.deepEqual(
+    viewDeku.nextChoices.map((c) => c.id),
+    ["hyrule-castle"],
+  );
 
-  const back = applyGoBack(next);
+  const back = applyGoBack(deku);
   assert.equal(back.currentCardId, "kokiri-gear");
   assert.equal(back.selectedHistory.length, 0);
+});
+
+test("서버 엔진: 하이랄 성 이후 3갈래 증강 카드 선택 및 복귀", () => {
+  const deku = applySelectNext(createInitialState(), "deku-tree");
+  const castle = applySelectNext(deku, "hyrule-castle");
+  const castleView = buildAdventureView(castle);
+
+  assert.equal(castleView.card.id, "hyrule-castle");
+  assert.equal(castleView.card.totalHints, 3);
+  assert.equal(castleView.card.revealedHints.length, 0);
+  assert.deepEqual(
+    castleView.nextChoices.map((c) => c.id),
+    ["goron-main", "kakariko-prep", "songs-route"],
+  );
+
+  const prep = applySelectNext(castle, "kakariko-prep");
+  const prepView = buildAdventureView(prep);
+  assert.equal(prepView.card.id, "kakariko-prep");
+  assert.equal(prepView.card.totalHints, 3);
+  assert.equal(prepView.card.revealedHints.length, 0);
+  assert.equal(prepView.nextChoices.length, 0);
+
+  const backToCastle = applyGoBack(prep);
+  assert.equal(backToCastle.currentCardId, "hyrule-castle");
 });

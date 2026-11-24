@@ -1,8 +1,29 @@
 import type { AdventureIdErrorCode } from "../lib/adventure-id.ts";
 
 export type GameId = "oot";
-export type OotCardId = "kokiri-gear" | "deku-tree";
-export type OotHintId = "kokiri-gear-1" | "kokiri-gear-2" | "kokiri-gear-3";
+export type OotCardId =
+  | "kokiri-gear"
+  | "deku-tree"
+  | "hyrule-castle"
+  | "goron-main"
+  | "kakariko-prep"
+  | "songs-route";
+export type OotHintId =
+  | "kokiri-gear-1"
+  | "kokiri-gear-2"
+  | "kokiri-gear-3"
+  | "deku-tree-1"
+  | "deku-tree-2"
+  | "deku-tree-3"
+  | "hyrule-castle-1"
+  | "hyrule-castle-2"
+  | "hyrule-castle-3"
+  | "kakariko-prep-1"
+  | "kakariko-prep-2"
+  | "kakariko-prep-3"
+  | "songs-route-1"
+  | "songs-route-2"
+  | "songs-route-3";
 export type HintRevealMode = "next" | "all";
 
 export interface RevealedHintView {
