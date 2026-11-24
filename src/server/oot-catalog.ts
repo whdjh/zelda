@@ -107,7 +107,7 @@ export const DEFAULT_OOT_CATALOG: AdventureCatalog = {
         "성 앞 말론에게 신기한 알을 받아 성문을 넘고, 자고 있는 타론을 깨워 안뜰로 들어갑니다.",
         "경비병을 피해 젤다 공주에게 편지를, 임파에게 젤다의 자장가를 배웁니다.",
       ],
-      referenceUrl: "https://gamewith.jp/zelda-tokino-ocarina/563310",
+      referenceUrl: "https://gamewith.jp/zelda-tokino-ocarina/563394",
       hintQuestion: "성문이 닫혀 있어서 안으로 못 들어가요.",
       hints: [
         {
@@ -199,7 +199,7 @@ export const DEFAULT_OOT_CATALOG: AdventureCatalog = {
         "목장 건물 안 타론의 슈퍼 닭 찾기 미니게임으로 빈 병을 하나 더 챙길 수 있습니다.",
         "코키리 숲의 미혹의 숲에서 음악 소리가 커지는 통로를 따라 숲의 성역으로 가면 사리아의 노래를 미리 배웁니다.",
       ],
-      referenceUrl: "https://gamewith.jp/zelda-tokino-ocarina/563310",
+      referenceUrl: "https://gamewith.jp/zelda-tokino-ocarina/570656",
       hintQuestion: "미혹의 숲에서 자꾸 입구로 돌아와요.",
       hints: [
         {
